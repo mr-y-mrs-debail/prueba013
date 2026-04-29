@@ -86,16 +86,16 @@ input[type="search"] {
 
 .wrapper {
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     max-width: 100% !important;
     margin: 0 !important;
-    padding: 40px 20px;
+    padding: calc(env(safe-area-inset-top) + 10px) 20px calc(env(safe-area-inset-bottom) + 20px) 20px;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 30px) !important;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
     z-index: 1;
-    border-radius: 0;
     background: transparent;
 }
 
@@ -145,10 +145,12 @@ input[type="search"] {
 /* Menú _____________________________________________________________________________________________________________ */
 
 .nav-flotante {
-    top: 25px;
-    right: 20px;
-    align-items: center;
+    top: calc(env(safe-area-inset-top) + 30px); 
+    right: -15px;
     position: absolute;
+    z-index: 100;
+    display: flex;
+    align-items: center;
 }
 
 .boton-principal {
@@ -286,10 +288,12 @@ input[type="search"] {
 }
 
 .dropdown {
-    position: relative;
+    position: absolute;
+    top: calc(env(safe-area-inset-top) + 30px); 
+    left: 20px;
     width: 40px;
     height: 40px;
-    margin-right: auto;
+    z-index: 100;
 }
 
 .show-search .dropdown {
@@ -302,15 +306,11 @@ input[type="search"] {
 .lupa {
     position: absolute;
     display: flex;
-    -webkit-text-fill-color: var(--cbarrita);
-    top: 25%;
-    right: 25px;
-    transform: translateY(-50%) rotate(0deg); 
-    opacity: 1; 
-    visibility: visible; 
-    width: 80%;
-    height: 80%;
-    cursor: pointer;
+    top: 50%;
+    right: 50%;
+    transform: translate(-50%, -50%);
+    width: 1.6rem;
+    height: 1.6rem;
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
@@ -653,6 +653,7 @@ input[type="search"] {
     height: 85vw;
     max-height: 350px;
     margin: 0 auto;
+    top: 15px;
 }
 
 .img-area:hover {
@@ -754,7 +755,7 @@ input[type="search"] {
 
 .song-details { 
     text-align: center; 
-    margin: 25px 0; 
+    margin: 20px 0 15px 0; 
 } 
 
 .song-details p {
@@ -764,8 +765,8 @@ input[type="search"] {
 } 
 
 .song-details .name { 
-    font-size: 23px;
-    font-weight: 500;
+    font-size: 24px;
+    font-weight: 600;
     margin-top: -5px; 
 }
 
@@ -818,6 +819,15 @@ input[type="search"] {
     font-size: 13px; 
     color: var(--control); 
 } 
+
+.controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    /* Añadimos un margen abajo para separarlo del borde físico del cel */
+    margin-bottom: 10px; 
+}
 
 .controls i { 
     font-size: 23px; 

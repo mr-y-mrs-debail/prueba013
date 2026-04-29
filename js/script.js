@@ -3,14 +3,13 @@ import { allMusic } from './music-list.js';
 
 window.allMusic = allMusic;
 
-// --- CONFIGURACIÓN DE COLOR THIEF ---
 const colorThief = new ColorThief();
 const rgbToCss = (rgb) => `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
 
-// --- SELECTORES ---
 const wrapper = document.querySelector(".wrapper");
-const imgArea = document.querySelector(".img-area"); // Usaremos este como principal
+const imgArea = document.querySelector(".img-area");
 const musicImg = imgArea.querySelector("img");
+const deviceDisplay = wrapper.querySelector(".device-display");
 export const musicName = wrapper.querySelector(".song-details .name");
 export const musicArtist = wrapper.querySelector(".song-details .artist");
 const playPauseBtn = wrapper.querySelector(".play-pause");
@@ -22,7 +21,6 @@ const progressBar = progressArea.querySelector(".progress-bar");
 const repeatBtn = document.querySelector("#repeat-plist");
 export const ulTag = wrapper.querySelector("ul");
 
-// --- SPINNER ---
 const spinnerHtml = `<div class="loading-spinner"><div class="loader"></div></div>`;
 imgArea.insertAdjacentHTML('beforeend', spinnerHtml); 
 
@@ -35,12 +33,19 @@ function hideLoadingSpinner() {
     if (!mainAudio.paused) imgArea.classList.add("playing");
 }
 
-// --- ESTADO INICIAL ---
+window.addEventListener("load", () => {
+    if (isShuffle) shuffleMusicInitial();
+    loadMusic(musicIndex);
+    
+    // Añade esta línea para que aparezca "PC" al cargar
+    if (deviceDisplay) deviceDisplay.textContent = "PC"; 
+});
+
+
 export let musicIndex = Math.floor(Math.random() * window.allMusic.length);
 let isShuffle = true;
 let shuffledPlaylist = [];
 
-// --- FUNCIÓN DE COLORES DINÁMICOS ---
 export function updatePlayerColor() {
     if (!wrapper || !musicImg) return;
     
@@ -53,7 +58,6 @@ export function updatePlayerColor() {
             wrapper.style.setProperty('--secondary-color', rgbToCss(colorPalette[1] || dominantColor));
             wrapper.style.setProperty('--tertiary-color', rgbToCss(colorPalette[2] || dominantColor));
             
-            // Legibilidad del texto
             const brightness = (dominantColor[0] * 299 + dominantColor[1] * 587 + dominantColor[2] * 114) / 1000;
             wrapper.style.color = brightness > 150 ? '#000' : '#fff';
             
@@ -150,7 +154,6 @@ function shuffleMusicInitial() {
     }
 }
 
-// --- EVENTOS ---
 playPauseBtn.addEventListener("click", () => playPauseMusic());
 nextBtn.addEventListener("click", () => nextMusic());
 prevBtn.addEventListener("click", () => prevMusic());
@@ -220,13 +223,12 @@ window.addEventListener("load", () => {
 
 musicImg.onload = () => {
     hideLoadingSpinner();
-    updatePlayerColor(); // Actualizar colores al cargar imagen
+    updatePlayerColor();
 };
 
 mainAudio.onwaiting = () => showLoadingSpinner();
 mainAudio.oncanplay = () => hideLoadingSpinner();
 
-// Exponer funciones
 window.playMusic = playMusic;
 window.pauseMusic = pauseMusic;
 window.setMusicAndPlay = setMusicAndPlay;
