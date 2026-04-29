@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">   
+    <meta name="title" content="ReproductorMV" />
+    <meta name="description" content="Escucha tu linda música, libre de anuncios Uyyyy." />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://metatags.io/" />
+    <meta property="og:title" content="ReproductorMV" />
+    <meta property="og:description" content="Escucha tu linda música, libre de anuncios Uyyyy." />
+    <!-- <meta property="og:url" /> -->
+    <meta property="og:image" content="https://i.pinimg.com/736x/14/01/8a/14018a58618677b50fcbcc740aacd7be.jpg" />
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://metatags.io/" />
+    <meta property="twitter:title" content="ReproductorMV" />
+    <meta property="twitter:description" content="Escucha tu linda música, libre de anuncios Uyyyy." />
+    <meta property="twitter:image" content="https://i.pinimg.com/736x/14/01/8a/14018a58618677b50fcbcc740aacd7be.jpg" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="img/icono.png">
+    <title>Música♫</title>
+</head>
+
+<body>
+       <div id="player-wrapper">
+    <div class="d-flex align-items-center justify-content-center">               
+        <div class="container-fluid p-0">
+            <div id="default-view" class="wrapper">
+                
+                <div class="top-bar d-flex justify-content-between align-items-center ">
+                            
+                        <div id="search-container-principal" class="search-container-principal">
+                            <div class="input-relative-wrapper" style="position: relative; flex: 1; display: flex; align-items: center;">
+                                <input type="text" id="search-input-principal" placeholder="Buscar..." autocomplete="off">
+        
+                                <i class="material-icons" id="clear-search-input">close</i>
+                            </div>
+                            
+                            <i class="material-icons" id="close-search">arrow_back</i>
+                        </div>
+                            
+                            <div class="dropdown">
+                                <a href="#" id="search-option"><span class="lupa search-option material-icons">search</span></a>
+                            </div>
+                            
+                            <nav class="nav-flotante" id="floating-menu-toggle">
+                                <a href="#" class="boton-principal">
+                                    <svg class="icono-principal" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.7">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                </a>
+                                
+                                <div class="menu-items" id="floating-menu-items">
+
+                                     <div class="menu-item item-3" id="open-all-songs"> 
+                                        <div class="icono-caja">
+                                            <i class="bi bi-card-list"></i>                                        
+                                        </div>
+                                        <p class="etiqueta">Biblioteca</p>
+                                    </div>
+
+                                    <div class="menu-item item-1" id="open-albums-menu">
+                                        <div class="icono-caja">
+                                            <i class="bi bi-folder" id="folder-icon"></i>
+                                            <i class="bi bi-folder2-open" id="folder-open-icon"></i> 
+                                        </div>
+                                        <p class="etiqueta">Artistas</p>
+                                    </div>
+
+                                    <div class="menu-item item-2">
+                                        <div class="icono-caja">
+                                            <i id="more-music" class="bi bi-music-note-list"></i>
+                                        </div>
+                                        <p class="etiqueta">Lista <br> (A-Z)</p>
+                                    </div>
+
+                                    <div class="menu-item item-4" id="favorites-trigger">
+                                        <div class="icono-caja">
+                                            <i class="bi bi-suit-heart"></i>
+                                        </div>
+                                        <p class="etiqueta">Favoritas</p>
+                                    </div>                                    
+                                </div>
+                            </nav>   
+                        </div>   
+
+                        <div id="suggestions-container-principal" class="suggestions-container"></div>
+                        <div class="img-area mt-3" id="download-trigger" style="position: relative; cursor: pointer;">
+    <img src="" class="img-fluid" alt="imgMV" id="main-album-art">
+
+    <div class="download-overlay d-flex align-items-center justify-content-center">
+        <div class="download-icon-circle">
+            <i class="bi bi-download"></i>
+        </div>
+    </div>
+
+    <a id="hidden-download-link" style="display: none;"></a>
+</div>
+                        <p class="device-display"></p>
+
+                        <div class="song-details text-center mt-3">
+                            <p class="name"></p>
+                            <p class="artist"></p>
+                        </div>
+                        <div class="player-actions-row">
+                            <div class="controls justify-content-start">
+                                <i id="repeat-plist" class="bi bi-shuffle" title="Playback shuffled"></i>
+                                <span id="mode-alert"></span> 
+                            </div>
+                            
+                            <div class="song-details-actions">
+                                <div class="dislike-container" title="No me gusta">
+                                    <input type="checkbox" class="checkbox" id="dislike-checkbox">
+                                    <div class="svg-container">
+                                        <svg xmlns="http://www.w3.org/2000/svg" id="dislike-button-empty" width="25" height="25" class="svg-outline dislike-empty bi bi-hand-thumbs-down" viewBox="0 0 512 512">
+                                            <path d="M323.8 477.2c-38.2 10.9-78.1-11.2-89-49.4l-5.7-20c-3.7-13-10.4-25-19.5-35l-51.3-56.4c-8.9-9.8-8.2-25 1.6-33.9s25-8.2 33.9 1.6l51.3 56.4c14.1 15.5 24.4 34 30.1 54.1l5.7 20c3.6 12.7 16.9 20.1 29.7 16.5s20.1-16.9 16.5-29.7l-5.7-20c-5.7-19.9-14.7-38.7-26.6-55.5c-5.2-7.3-5.8-16.9-1.7-24.9s12.3-13 21.3-13L448 288c8.8 0 16-7.2 16-16c0-6.8-4.3-12.7-10.4-15c-7.4-2.8-13-9-14.9-16.7s.1-15.8 5.3-21.7c2.5-2.8 4-6.5 4-10.6c0-7.8-5.6-14.3-13-15.7c-8.2-1.6-15.1-7.3-18-15.2s-1.6-16.7 3.6-23.3c2.1-2.7 3.4-6.1 3.4-9.9c0-6.7-4.2-12.6-10.2-14.9c-11.5-4.5-17.7-16.9-14.4-28.8c.4-1.3 .6-2.8 .6-4.3c0-8.8-7.2-16-16-16l-97.5 0c-12.6 0-25 3.7-35.5 10.7l-61.7 41.1c-11 7.4-25.9 4.4-33.3-6.7s-4.4-25.9 6.7-33.3l61.7-41.1c18.4-12.3 40-18.8 62.1-18.8L384 32c34.7 0 62.9 27.6 64 62c14.6 11.7 24 29.7 24 50c0 4.5-.5 8.8-1.3 13c15.4 11.7 25.3 30.2 25.3 51c0 6.5-1 12.8-2.8 18.7C504.8 238.3 512 254.3 512 272c0 35.3-28.6 64-64 64l-92.3 0c4.7 10.4 8.7 21.2 11.8 32.2l5.7 20c10.9 38.2-11.2 78.1-49.4 89zM32 384c-17.7 0-32-14.3-32-32L0 128c0-17.7 14.3-32 32-32l64 0c17.7 0 32 14.3 32 32l0 224c0 17.7-14.3 32-32 32l-64 0z"></path>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" id="dislike-button-filled" width="22" height="22" class="svg-filled dislike-filled bi bi-hand-thumbs-down-fill" viewBox="0 0 512 512" style="display: none;">
+                                    
+                                            <path d="M313.4 479.1c26-5.2 42.9-30.5 37.7-56.5l-2.3-11.4c-5.3-26.7-15.1-52.1-28.8-75.2l144 0c26.5 0 48-21.5 48-48c0-18.5-10.5-34.6-25.9-42.6C497 236.6 504 223.1 504 208c0-23.4-16.8-42.9-38.9-47.1c4.4-7.3 6.9-15.8 6.9-24.9c0-21.3-13.9-39.4-33.1-45.6c.7-3.3 1.1-6.8 1.1-10.4c0-26.5-21.5-48-48-48l-97.5 0c-19 0-37.5 5.6-53.3 16.1L202.7 73.8C176 91.6 160 121.6 160 153.7l0 38.3 0 48 0 24.9c0 29.2 13.3 56.7 36 75l7.4 5.9c26.5 21.2 44.6 51 51.2 84.2l2.3 11.4c5.2 26 30.5 42.9 56.5 37.7zM32 384l64 0c17.7 0 32-14.3 32-32l0-224c0-17.7-14.3-32-32-32L32 96C14.3 96 0 110.3 0 128L0 352c0 17.7 14.3 32 32 32z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="heart-container" title="Me gusta">
+                                    <input type="checkbox" class="checkbox" id="like-checkbox">
+                                    <div class="svg-container">
+                                        <svg id="like-button-empty" xmlns="http://www.w3.org/2000/svg" width="25" height="25" class="svg-outline heart-empty bi bi-heart" viewBox="0 0 24 24">
+                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                        </svg>
+                                        <svg id="like-button-filled" xmlns="http://www.w3.org/2000/svg" width="22" height="22" class="svg-filled heart-filled bi bi-heart-fill" viewBox="0 0 24 24" style="display: none;">
+                                            <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="progress-area mt-3">
+                            <div class="progress-bar">
+                                <audio id="main-audio" preload="auto" src=""></audio>                                
+                            </div>
+                            <div class="song-timer d-flex justify-content-between mt-2">
+                                <span class="current-time">0:00</span>
+                                <span class="max-duration">0:00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="controls d-flex justify-content-around align-items-center mt-4 mb-2">
+                            <i id="prev" class="bi bi-skip-start-fill"></i>
+                            <div class="play-pause">
+                                <i class="bi bi-play-fill"></i>
+                            </div>
+                            <i id="next" class="bi bi-skip-end-fill"></i>
+                        </div>
+                        
+                        <div class="music-list mt-3">
+                            <div class="header d-flex justify-content-between align-items-center">
+                                <div class="row">
+                                    <h3 class="title-list">Todas las canciones</h3>
+                                </div>
+                                
+                                <div>
+                                    <i id="back-to-alphabet" class="material-icons flecha hidden">arrow_back</i>
+                                    <i id="close" class="material-icons">close</i>
+                                </div>
+                            </div>
+                            <div class="alphabet-list">
+                                <ul id="alphabet"></ul>
+                            </div>
+                            <ul id="playlist"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="blur-overlay">
+        <div id="song-list-container">
+            <i id="close-song-list" class="bi bi-arrow-left-short" style="cursor: pointer;"></i>
+            <h2 id="artist-name"></h2>
+            <div id="song-list"></div>
+        </div>
+    </div>
+    
+    <div id="album-container">
+        <div id="sticky-buttons-container">
+            <i class="bi bi-x" id="close-album-list" style="cursor: pointer;"></i>
+        </div>
+        <h2 class="textAlbum">Artistas</h2>
+        <div id="album-list-items">
+            <div class="album-item" data-artist="Anuel AA">
+                <i class="bi bi-file-earmark-music-fill"> Anuel AA</i>
+            </div>
+            <div class="album-item" data-artist="Arcángel">
+                <i class="bi bi-file-earmark-music-fill"> Arcángel</i>
+            </div>
+            <div class="album-item" data-artist="Aventura">
+                <i class="bi bi-file-earmark-music-fill"> Aventura</i>
+            </div>
+            <div class="album-item" data-artist="Baby Rasta">
+                <i class="bi bi-file-earmark-music-fill"> Baby Rasta & Gringo</i>
+            </div>
+            <div class="album-item" data-artist="Bad Bunny">
+                <i class="bi bi-file-earmark-music-fill"> Bad Bunny</i>
+            </div>
+            <div class="album-item" data-artist="Blessd">
+                <i class="bi bi-file-earmark-music-fill"> Blessd</i>
+            </div>
+            <div class="album-item" data-artist="Bryant Myers">
+                <i class="bi bi-file-earmark-music-fill"> Bryant Myers</i>
+            </div>
+            <div class="album-item" data-artist="Brytiago">
+                <i class="bi bi-file-earmark-music-fill"> Brytiago</i>
+            </div>
+            <div class="album-item" data-artist="Camilo">
+                <i class="bi bi-file-earmark-music-fill"> Camilo</i>
+            </div>
+            <div class="album-item" data-artist="Casper Magico">
+                <i class="bi bi-file-earmark-music-fill"> Casper Magico</i>
+            </div>
+            <div class="album-item" data-artist="Chencho Corleone">
+                <i class="bi bi-file-earmark-music-fill"> Chencho Corleone</i>
+            </div>
+            <div class="album-item" data-artist="Cosculluela">
+                <i class="bi bi-file-earmark-music-fill"> Cosculluela</i>
+            </div>
+            <div class="album-item" data-artist="Daddy Yankee">
+                <i class="bi bi-file-earmark-music-fill"> Daddy Yankee</i>
+            </div>
+            <div class="album-item" data-artist="Don Omar">
+                <i class="bi bi-file-earmark-music-fill"> Don Omar</i>
+            </div>
+            <div class="album-item" data-artist="Eladio Carrion">
+                <i class="bi bi-file-earmark-music-fill"> Eladio Carrion</i>
+            </div>
+            <div class="album-item" data-artist="Ele A El Dominio">
+                <i class="bi bi-file-earmark-music-fill"> Ele A El Dominio</i>
+            </div>
+            <div class="album-item" data-artist="El Alfa">
+                <i class="bi bi-file-earmark-music-fill"> El Alfa</i>
+            </div>
+            <div class="album-item" data-artist="Farruko">
+                <i class="bi bi-file-earmark-music-fill"> Farruko</i>
+            </div>
+            <div class="album-item" data-artist="Fuerza Regida">
+                <i class="bi bi-file-earmark-music-fill"> Fuerza Regida</i>
+            </div>
+            <div class="album-item" data-artist="Héctor Acosta El Torito">
+                <i class="bi bi-file-earmark-music-fill"> Héctor Acosta</i>
+            </div>
+            <div class="album-item" data-artist="Karol G">
+                <i class="bi bi-file-earmark-music-fill"> Karol G</i>
+            </div>
+            <div class="album-item" data-artist="Kidd Keo">
+                <i class="bi bi-file-earmark-music-fill"> Kidd Keo</i>
+            </div>
+            <div class="album-item" data-artist="Lil Pump">
+                <i class="bi bi-file-earmark-music-fill"> Lil Pump</i>
+            </div>
+            <div class="album-item" data-artist="Lunay">
+                <i class="bi bi-file-earmark-music-fill"> Lunay</i>
+            </div>
+            <div class="album-item" data-artist="Maldy">
+                <i class="bi bi-file-earmark-music-fill"> Maldy</i>
+            </div>
+            <div class="album-item" data-artist="Maluma">
+                <i class="bi bi-file-earmark-music-fill"> Maluma</i>
+            </div>
+            <div class="album-item" data-artist="Michael Jackson">
+                <i class="bi bi-file-earmark-music-fill"> Michael Jackson</i>
+            </div>
+            <div class="album-item" data-artist="Millonario">
+                <i class="bi bi-file-earmark-music-fill"> Millonario</i>
+            </div>
+            <div class="album-item" data-artist="Natanael Cano">
+                <i class="bi bi-file-earmark-music-fill"> Natanael Cano</i>
+            </div>
+            <div class="album-item" data-artist="Nicky Jam">
+                <i class="bi bi-file-earmark-music-fill"> Nicky Jam</i>
+            </div>
+            <div class="album-item" data-artist="Nio Garcia">
+                <i class="bi bi-file-earmark-music-fill"> Nio Garcia</i>
+            </div>
+            <div class="album-item" data-artist="Noriel">
+                <i class="bi bi-file-earmark-music-fill"> Noriel</i>
+            </div>
+            <div class="album-item" data-artist="Ovi">
+                <i class="bi bi-file-earmark-music-fill"> Ovi</i>
+            </div>
+            <div class="album-item" data-artist="Ozuna">
+                <i class="bi bi-file-earmark-music-fill"> Ozuna</i>
+            </div>
+            <div class="album-item" data-artist="Pacho El Antifeka">
+                <i class="bi bi-file-earmark-music-fill"> Pacho El Antifeka</i>
+            </div>
+            <div class="album-item" data-artist="Plan B">
+                <i class="bi bi-file-earmark-music-fill"> Plan B</i>
+            </div>
+            <div class="album-item" data-artist="Porta">
+                <i class="bi bi-file-earmark-music-fill"> Porta</i>
+            </div>
+            <div class="album-item" data-artist="Rauw Alejandro">
+                <i class="bi bi-file-earmark-music-fill"> Rauw Alejandro</i>
+            </div>
+            <div class="album-item" data-artist="Tainy">
+                <i class="bi bi-file-earmark-music-fill"> Tainy</i>
+            </div>
+            <div class="album-item" data-artist="The Panic">
+                <i class="bi bi-file-earmark-music-fill"> The Panic</i>
+            </div>
+            <div class="album-item" data-artist="Wisin">
+                <i class="bi bi-file-earmark-music-fill"> Wisin & Yandel</i>
+            </div>
+            <div class="album-item" data-artist="XXXTENTACION">
+                <i class="bi bi-file-earmark-music-fill"> XXXTENTACION</i>
+            </div>
+            <div class="album-item" data-artist="Zion">
+                <i class="bi bi-file-earmark-music-fill"> Zion & Lennox</i>
+            </div>
+            <div class="album-item" data-artist="Otros">
+                <i class="bi bi-file-earmark-music-fill"> Otros</i>
+            </div>
+        </div>
+    </div>  
+    
+    <div id="favorites-container" style="display: none;">
+        <div id="sticky-buttons-container">
+            <i class="bi bi-x" id="close-favorites-list" style="cursor: pointer;"></i>
+        </div>
+        <h2 class="textAlbum">Mis Favoritas</h2>
+        <div id="favorites-list-items">
+            <div class="album-item" data-artist="Me Gusta">
+                <i class="bi bi-suit-heart-fill"></i> Favoritas</i>
+            </div>
+            <div class="album-item" data-artist="No Me Gusta">
+                <i class="bi bi-hand-thumbs-down"></i> No favoritas</i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de canciones fav, orden, etc -->
+    
+    <div id="all-songs-container" style="display: none;">
+        <header class="fav-header">
+            <h2 class="fav-title">Tus canciones favoritas</h2>
+            <i class="bi bi-chevron-down fav-close-btn" id="close-all-songs-list"></i>      
+        </header>
+        
+        <div class="song-content-scroll"> 
+            <div class="fav-carousel-wrapper">
+                <div class="fav-carousel" id="fav-carousel"> </div>
+            </div>
+        </div>
+        
+        <div class="sticky-header-songs"> 
+            <div class="top-sticky-bar">
+                <div id="search-container-songs" class="search-container-songs">
+                    <i class="material-icons search-icon-songs">search</i> 
+                    <input type="text" id="search-input-songs" placeholder="Buscar..." autocomplete="off">
+                </div>
+            </div>
+            
+            <div id="suggestions-container-songs" class="suggestions-container-songs"></div> 
+            
+            <div class="songs-list-section-header px-4 d-flex justify-content-between align-items-center">                
+                <div class="d-flex">
+                    <h3 class="songs-list-subtitle is-active py-2" data-list-type="all">Canciones</h3> 
+                    <h3 class="songs-list-subtitle py-2" data-list-type="recent">
+                        <i class="bi bi-clock-history"></i> Recientes
+                    </h3>
+                </div>
+                
+                <div class="songs-list-controls-right align-items-center gap-3" id="sort-menu-wrapper">
+                    <i class="bi bi-sort-down" id="open-sort-menu"></i> 
+                </div>
+            </div>
+        </div>
+        
+        <div id="all-songs-list-items" class="px-4 pb-5"></div>
+        <div id="recent-songs-list-items" class="px-4 pb-5" style="display: none;"></div>
+        
+        <div id="sort-menu" style="display: none;">
+            <p class="orden">Ordenar canciones</p>
+            <p class="sort-option" data-sort="date">Por fecha <i class="bi bi-check-lg check-icon" style="display: none;"></i></p>
+            <p class="sort-option selected" data-sort="name">Por nombre <i class="bi bi-check-lg check-icon" style="display: inline-block;"></i></p>
+            <p class="sort-option" data-sort="plays">Por número de reproducciones <i class="bi bi-check-lg check-icon" style="display: none;"></i></p>
+        </div>
+    </div>
+    
+    <div id="mini-player-bar" class="mini-player-bar">
+        <div class="mini-player-left d-flex align-items-center">
+            <div id="suggestions-container-principal" class="mini-disc-wrapper"> 
+                <div id="mini-image-spinner" class="mini-spinner"></div>
+                <img src="" alt="imgMV" class="img-fluid mini-disc-art" id="mini-disc-art"> 
+            </div>
+            <div class="song-details mini-song-info ml-2" style="user-select: none; -webkit-user-select: none;">
+                <p class="name" id="mini-song-name"></p>
+                <p class="artist" id="mini-song-artist"></p>
+            </div>
+        </div>
+        
+        <div class="mini-player-right d-flex align-items-center">
+            <i id="mini-prev" class="bi bi-skip-start-fill mini-control-icon"></i>
+            <div class="mini-play-pause-btn" id="mini-play-pause-btn"> 
+                <i class="bi bi-play-fill mini-play-pause-icon" id="mini-play-pause-icon"></i> 
+            </div>
+            
+            <i id="mini-next" class="bi bi-skip-end-fill mini-control-icon"></i>
+        </div>
+    </div>
+
+    <div id="offline-message" class="hidden-message">
+        <p>¡Ups! Parece que no tienes conexión a internet Amor.</p>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script> 
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script type="module" src="js/music-list.js"></script>
+    <script type="module" src="js/script.js"></script>    
+    <script type="module" src="js/search.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleMenu = document.getElementById('floating-menu-toggle');
+            const menuItemsContainer = document.getElementById('floating-menu-items');
+            const principalButton = toggleMenu ? toggleMenu.querySelector('.boton-principal') : null;
+            
+            if (principalButton && menuItemsContainer && toggleMenu) {
+                
+                principalButton.addEventListener('click', (event) => {
+                    event.preventDefault(); 
+                    toggleMenu.classList.toggle('open');
+                });
+                
+                const elementosQueCierran = menuItemsContainer.querySelectorAll('div.menu-item:not(.modo-switch-flotante)');
+                
+                elementosQueCierran.forEach(item => {
+                    item.addEventListener('click', (event) => {
+                        event.stopPropagation(); 
+                        
+                        const clicEnIconoCaja = event.target.closest('.icono-caja');
+                        
+                        if (clicEnIconoCaja) {
+                            console.log('¡Acción del icono activada!');
+                            if (toggleMenu.classList.contains('open')) {
+                                toggleMenu.classList.remove('open');
+                            }
+                        }
+                    });
+                });
+                
+                document.addEventListener('click', (event) => {
+                    if (toggleMenu.classList.contains('open')) {
+                        
+                        const isClickInsideMenu = toggleMenu.contains(event.target);
+                        
+                        if (!isClickInsideMenu) {
+                            toggleMenu.classList.remove('open');
+                            console.log('Menú cerrado por clic exterior.');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+    
+</body>
+</html>
