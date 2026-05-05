@@ -37,7 +37,6 @@ window.addEventListener("load", () => {
     if (isShuffle) shuffleMusicInitial();
     loadMusic(musicIndex);
     
-    // Añade esta línea para que aparezca "PC" al cargar
     if (deviceDisplay) deviceDisplay.textContent = "PC"; 
 });
 
@@ -183,24 +182,43 @@ mainAudio.addEventListener("ended", () => nextMusic());
 repeatBtn.addEventListener("click", () => {
     let title = repeatBtn.getAttribute("title");
     switch(title) {
-        case "Playback shuffled":
+        case "Modo aleatorio": //Playback shuffled
             repeatBtn.className = "bi bi-arrow-left-right";
-            repeatBtn.setAttribute("title", "Playlist looped");
+            repeatBtn.setAttribute("title", "Lista en bucle");
+            showToast("Lista en bucle"); 
             isShuffle = false;
             break;
-        case "Playlist looped":
+        case "Lista en bucle": 
             repeatBtn.className = "bi bi-repeat-1";
-            repeatBtn.setAttribute("title", "Song looped");
+            repeatBtn.setAttribute("title", "Canción en bucle");
+            showToast("Canción en bucle");
             isShuffle = false;
             break;
         default:
             repeatBtn.className = "bi bi-shuffle";
-            repeatBtn.setAttribute("title", "Playback shuffled");
+            repeatBtn.setAttribute("title", "Modo aleatorio");
+            showToast("Modo aleatorio");
             isShuffle = true;
             shuffleMusicInitial();
             break;
     }
 });
+
+function showToast(message) {
+    let toast = document.getElementById("toast-container");
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "toast-container";
+        document.body.appendChild(toast);
+    }
+    
+    toast.innerText = message;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2000);
+}
 
 const updateMediaSession = (song) => {
     if ('mediaSession' in navigator) {
@@ -239,54 +257,58 @@ window.updatePlayerColor = updatePlayerColor;
 
 
 
-const likeButtonEmpty = document.querySelector(".content .buttons .item-2 .empty-icon"); 
-const likeButtonFilled = document.querySelector(".content .buttons .item-2 .filled-icon");
-const dislikeButtonEmpty = document.querySelector(".content .buttons .item-3 .empty-icon");
-const dislikeButtonFilled = document.querySelector(".content .buttons .item-3 .filled-icon");
-
 const likeCheckbox = document.getElementById("like-checkbox");
 const dislikeCheckbox = document.getElementById("dislike-checkbox");
+
+const heartOutline = document.querySelector(".heart-container .svg-outline");
+const heartFilled = document.querySelector(".heart-container .svg-filled");
+
+const thumbRegular = document.querySelector(".dislike-container .dislike-empty");
+const thumbSolid = document.querySelector(".dislike-container .dislike-filled");
 
 function updateLikeDislikeButtons(liked, disliked) {
     if (likeCheckbox) likeCheckbox.checked = liked;
     if (dislikeCheckbox) dislikeCheckbox.checked = disliked;
 
-    if (likeButtonEmpty && likeButtonFilled) {
-        likeButtonEmpty.style.display = liked ? 'none' : 'block';
-        likeButtonFilled.style.display = liked ? 'block' : 'none';
+    if (heartOutline && heartFilled) {
+        heartOutline.style.display = liked ? "none" : "block";
+        heartFilled.style.display = liked ? "block" : "none";
+        if (liked) heartFilled.style.fill = "#ff6e6e";
     }
 
-    if (dislikeButtonEmpty && dislikeButtonFilled) {
-        dislikeButtonEmpty.style.display = disliked ? 'none' : 'block';
-        dislikeButtonFilled.style.display = disliked ? 'block' : 'none';
+    if (thumbRegular && thumbSolid) {
+        thumbRegular.style.display = disliked ? "none" : "block";
+        thumbSolid.style.display = disliked ? "block" : "none";
+        
+        if (disliked) {
+            thumbSolid.style.fill = "var(--cbarrita)"; 
+            thumbSolid.style.opacity = "1";
+        }
     }
 }
 
 function handleLike() {
-    const currentlyLiked = likeCheckbox ? likeCheckbox.checked : false;
-    
-    if (currentlyLiked) {
-        updateLikeDislikeButtons(false, false);
-    } else {
-        updateLikeDislikeButtons(true, false);
-    }
+    const isCurrentlyLiked = likeCheckbox ? likeCheckbox.checked : false;
+    updateLikeDislikeButtons(!isCurrentlyLiked, false);
 }
 
 function handleDislike() {
-    const currentlyDisliked = dislikeCheckbox ? dislikeCheckbox.checked : false;
-
-    if (currentlyDisliked) {
-        updateLikeDislikeButtons(false, false);
-    } else {
-        updateLikeDislikeButtons(false, true);
-    }
+    const isCurrentlyDisliked = dislikeCheckbox ? dislikeCheckbox.checked : false;
+    updateLikeDislikeButtons(false, !isCurrentlyDisliked);
 }
 
-if (likeButtonEmpty) likeButtonEmpty.addEventListener('click', handleLike);
-if (likeButtonFilled) likeButtonFilled.addEventListener('click', handleLike);
+document.querySelector(".heart-container")?.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleLike();
+});
 
-if (dislikeButtonEmpty) dislikeButtonEmpty.addEventListener('click', handleDislike);
-if (dislikeButtonFilled) dislikeButtonFilled.addEventListener('click', handleDislike);
+document.querySelector(".dislike-container")?.addEventListener('click', (e) => {
+    if(e.target.type === 'checkbox') return;
+    e.preventDefault();
+    e.stopPropagation();
+    handleDislike();
+});
 
 function loadInitialLikesDislikes(songId) {
     updateLikeDislikeButtons(false, false);
