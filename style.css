@@ -86,17 +86,25 @@ input[type="search"] {
 
 .wrapper {
     width: 100vw;
-    height: 100dvh;
+    height: 100dvh; 
     max-width: 100% !important;
     margin: 0 !important;
-    padding: calc(env(safe-area-inset-top) + 10px) 20px calc(env(safe-area-inset-bottom) + 20px) 20px;
-    padding-bottom: calc(env(safe-area-inset-bottom) + 30px) !important;
+    padding: env(safe-area-inset-top) 20px calc(env(safe-area-inset-bottom) + 10px) 20px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start; 
     position: relative;
     z-index: 1;
     background: transparent;
+}
+
+@media (max-width: 768px) {    
+    .wrapper {
+        padding-top: calc(env(safe-area-inset-top) + 15px); 
+        padding-bottom: calc(env(safe-area-inset-bottom) + 10px);
+        width: 100%;
+        height: 100dvh;
+    }
 }
 
 .wrapper i { 
@@ -127,19 +135,6 @@ input[type="search"] {
         radial-gradient(circle at 80% 70%, var(--dominant-color), transparent 50%),
         radial-gradient(circle at 50% 50%, var(--tertiary-color), transparent 60%);
     animation: move-b 25s linear infinite reverse;
-}
-
-
-
-@media (max-width: 768px) {    
-    .wrapper {
-        padding: 20px;
-        width: 100%;
-        max-width: 100%;
-        height: 100vh;
-        border-radius: 0; 
-        margin: 0;
-    }
 }
 
 /* Menú _____________________________________________________________________________________________________________ */
@@ -656,17 +651,18 @@ input[type="search"] {
 }
 
 .img-area {
-    width: 85vw; 
-    max-width: 350px;
-    height: 85vw;
-    max-height: 350px;
+    width: 80vw;
+    max-width: 340px;
+    height: 80vw;
+    max-height: 340px;
     margin: 0 auto;
-    top: 15px;
-    padding: 0 25px;
+    margin-top: 90px !important; 
+    position: relative;
+    top: 0; 
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 65px !important;
 }
 
 .img-container {
@@ -680,7 +676,6 @@ input[type="search"] {
     transform: scale(1.02);
 }
 
-/* Aplica esto a tu clase o al ID de la imagen */
 #main-album-art {
     width: 100%;
     aspect-ratio: 1 / 1;
@@ -2417,9 +2412,10 @@ ul li.playing {
     font-size: 10px;
     color: var(--cbarrita);
     margin-right: 15px;
-    margin-top: 23px;
-    margin-bottom: 5px;
+    margin-top: 5px;
+    margin-bottom: 0px;
     text-align: right;
+    line-height: 1;
 }
 
 .player-actions-row {
