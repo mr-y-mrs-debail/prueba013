@@ -273,7 +273,7 @@ function updateLikeDislikeButtons(liked, disliked) {
     if (heartOutline && heartFilled) {
         heartOutline.style.display = liked ? "none" : "block";
         heartFilled.style.display = liked ? "block" : "none";
-        if (liked) heartFilled.style.fill = "#ff6e6e";
+        if (liked) heartFilled.style.fill = "#ff4757";    //Cambio de COLOR
     }
 
     if (thumbRegular && thumbSolid) {
