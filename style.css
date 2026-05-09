@@ -2305,19 +2305,47 @@ ul li.playing {
     margin-top: -10px;
 }
 
-.heart-container { 
-    position: relative;
-    width: 32px;
-    height: 32px;
-    margin-right: 25px; 
+.heart-container .checkbox {
+    -webkit-appearance: none;
+    appearance: none;    
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
     cursor: pointer;
-    user-select: none;
-    touch-action: manipulation; 
+    z-index: 10;
+    display: block !important;
+}
+
+.svg-container {
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.heart-container {
+    width: 28px;
+    height: 28px;
+    margin-right: 20px; 
+    margin-left: -10px;
+    cursor: pointer;
+    touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    vertical-align: middle;
 }
 
 .heart-container:active {
-    transform: scale(0.9); 
+    transform: scale(0.85);
+    transition: transform 0.1s;
 }
 
 .heart-container .svg-container {
@@ -2339,49 +2367,54 @@ ul li.playing {
 }
 
 .heart-container .svg-filled {
-    fill: #ff4757; 
-    opacity: 0;
-    transform: scale(0);
-    position: absolute;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    fill: #ff4757 !important;
+    position: absolute !important;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    pointer-events: none;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: none !important;
+    transform: scale(0);
+    opacity: 0;
+}
+
+.heart-container .svg-filled[style*="display: block"] {
+    display: block !important;
+    transform: scale(1);
+    animation: heartPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    opacity: 1;
 }
 
 .heart-container .svg-outline {
-    pointer-events: none;
-    transition: fill 0.2s ease;
-}
-
-.heart-container .checkbox {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0;
-    z-index: 5;
-    cursor: pointer;
-    margin: 0;
+    pointer-events: none;
+}
+
+.heart-container .checkbox {
+    pointer-events: none;
 }
 
 .heart-container .checkbox:checked ~ .svg-container .svg-filled {
-    opacity: 1;
-    transform: scale(1);
-    animation: heartPop 0.4s forwards;
+    opacity: 1 !important;
+    transform: scale(1) !important;
+    visibility: visible !important;
 }
 
 .heart-container .checkbox:checked ~ .svg-container .svg-outline {
-    fill: #ff4757;
+    fill: #ff4757 !important;
 }
 
 @keyframes heartPop {
-    0% { transform: scale(0); }
-    70% { transform: scale(1.2); } 
-    100% { transform: scale(1); }
+    0% { transform: scale(0.5); opacity: 0.5; }
+    70% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 .dislike-container {
