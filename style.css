@@ -505,34 +505,6 @@ transform: scale(1) translateY(0);
     font-size: 0.9rem;
 }
 
-/* Barra de música, progress, time, controls, list, etc. */
-
-.top-bar, .progress-area 
-.song-timer, .controls, 
-.music-list .header, 
-.music-list ul li { 
-    display: flex; 
-    align-items: center; 
-    justify-content: flex-start; 
-    gap: 10px;
-}
-
-.top-bar i { 
-    font-size: 30px; 
-    color: var(--control); 
-} 
-
-.top-bar i:first-child { 
-    margin-left: -7px; 
-}
-
-.top-bar span { 
-    font-size: 28px; 
-    margin-left: 265px;    
-    color: var(--white); 
-    transition: all 0.5s ease;
-}
-
 
 /* img________________________________________________________________________________________________________________________________ */
 
@@ -849,11 +821,39 @@ transform: scale(1) translateY(0);
     opacity: 1; 
 }
 
+/* Barra de música, progress, time, controls, list, etc. */
+
+.top-bar, .progress-area 
+.song-timer, .controls, 
+.music-list .header, 
+.music-list ul li { 
+    display: flex; 
+    align-items: center; 
+    justify-content: flex-start; 
+    gap: 10px;
+}
+
+.top-bar i { 
+    font-size: 30px; 
+    color: var(--control); 
+} 
+
+.top-bar i:first-child { 
+    margin-left: -7px; 
+}
+
+.top-bar span { 
+    font-size: 28px; 
+    margin-left: 265px;    
+    color: var(--white); 
+    transition: all 0.5s ease;
+}
+
 /* songs controls____________________________________________________________________________________________________________________ */
 
 .song-details { 
     text-align: center; 
-    margin: 5px auto 20px; 
+    margin: 5px auto 40px; 
     max-width: 90%;
 }
 
@@ -867,7 +867,7 @@ transform: scale(1) translateY(0);
     font-size: 24px;
     font-weight: 700;
     color: var(--white);
-    margin-bottom: 4px;
+    margin-bottom: 5px;
     letter-spacing: -0.5px;
 }
 
@@ -888,7 +888,7 @@ transform: scale(1) translateY(0);
     background: var(--control); 
     cursor: pointer;
     position: relative;
-    overflow: visible; 
+    margin-bottom: 5px; 
 }
 
 .progress-area .progress-bar { 
@@ -928,7 +928,8 @@ transform: scale(1) translateY(0);
     align-items: center;
     justify-content: space-around;
     width: 100%;
-    margin-bottom: 10px; 
+    margin-top: 0px; 
+    margin-bottom: 0px; 
 }
 
 .controls i { 
@@ -2286,7 +2287,7 @@ ul li.playing {
 /* Botones de me gusta y no me gusta_____________________________________________________________________________________________________ */
 
 .song-details {
-    margin-bottom: -7px;
+    margin-bottom: 15px;
 }
 
 .song-details-actions svg {
@@ -2398,69 +2399,38 @@ ul li.playing {
     cursor: pointer;
     user-select: none;
     margin-left: 10px;
-}
-
-.dislike-container .dislike-empty {
-    fill: var(--cbarrita);
-}
-
-.dislike-container .dislike-filled {
-    display: none;
-    fill: var(--cbarrita); 
-    animation: keyframes-fill-dislike 0.5s;
-}
-
-.dislike-container input:checked ~ .thumbs-up-regular {
-    display: none;
-}
-
-.dislike-container input:checked ~ .thumbs-up-solid {
-    display: block;
-    fill: transparent; 
+    width: 28px;
+    height: 28px;
+    -webkit-tap-highlight-color: transparent;
+    backface-visibility: hidden;
 }
 
 .dislike-container input {
     position: absolute;
     opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
+    pointer-events: none;
 }
 
-@keyframes keyframes-svg-filled {
-    0% {
-        transform: scale(0);
-        opacity: 0;
-    }
-    50% {
-        transform: scale(1.2) rotate(-10deg);
-    }
+.dislike-container .dislike-empty,
+.dislike-container .dislike-filled {
+    fill: var(--cbarrita);
+    transition: transform 0.2s ease;
 }
 
-@keyframes keyframes-svg-celebrate {
-    0% {
-        transform: scale(0);
-        opacity: 0;
-    }
-    50% {
-        opacity: 1;
-        filter: brightness(1.5);
-    }
-    100% {
-        transform: scale(1.4);
-        opacity: 0;
-        display: none;
-    }
+.dislike-container .dislike-filled {
+    display: none;
+    fill: var(--cbarrita);
+    will-change: transform, opacity;
+}
+
+.animate-dislike {
+    animation: keyframes-fill-dislike 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
 }
 
 @keyframes keyframes-fill-dislike {
-    0% {
-        transform: scale(0);
-        opacity: 0;
-    }
-    50% {
-        transform: scale(1.2) rotate(30deg);
-    }
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2) rotate(15deg); filter: brightness(1.2); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; filter: brightness(1); }
 }
 
 /* offline */

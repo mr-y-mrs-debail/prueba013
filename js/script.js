@@ -270,12 +270,20 @@ function updateLikeDislikeButtons(liked, disliked) {
     if (likeCheckbox) likeCheckbox.checked = liked;
     if (dislikeCheckbox) dislikeCheckbox.checked = disliked;
 
+    // LÓGICA DEL CORAZÓN (LIKE)
     if (heartOutline && heartFilled) {
         heartOutline.style.display = liked ? "none" : "block";
         heartFilled.style.display = liked ? "block" : "none";
-        if (liked) heartFilled.style.fill = "#ff4757";    //Cambio de COLOR
+        if (liked) {
+            heartFilled.style.fill = "#ff4757";
+            // Si tienes una clase de animación para el corazón, añádela aquí
+            heartFilled.classList.add('animate-heart'); 
+        } else {
+            heartFilled.classList.remove('animate-heart');
+        }
     }
 
+    // LÓGICA DEL PULGAR (DISLIKE)
     if (thumbRegular && thumbSolid) {
         thumbRegular.style.display = disliked ? "none" : "block";
         thumbSolid.style.display = disliked ? "block" : "none";
@@ -283,6 +291,11 @@ function updateLikeDislikeButtons(liked, disliked) {
         if (disliked) {
             thumbSolid.style.fill = "var(--cbarrita)"; 
             thumbSolid.style.opacity = "1";
+            // AÑADIMOS LA ANIMACIÓN
+            thumbSolid.classList.add('animate-dislike');
+        } else {
+            // QUITAMOS LA ANIMACIÓN para que pueda repetirse la próxima vez
+            thumbSolid.classList.remove('animate-dislike');
         }
     }
 }
