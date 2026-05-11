@@ -46,11 +46,12 @@
                         </div>
                             
                             <div class="dropdown">
-                                <a href="#" id="search-option"><span class="lupa search-option material-icons">search</span></a>
+                                 <a href="#" id="search-option"><span class="lupa search-option material-icons">search</span></a>
                             </div>
-                            
+                    <!-- cambio de # -->
+
                             <nav class="nav-flotante" id="floating-menu-toggle">
-                                <a href="#" class="boton-principal">
+                                <a href="javascript:void(0)" class="boton-principal">
                                     <svg class="icono-principal" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.7">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                                     </svg>
@@ -323,49 +324,58 @@
     <script type="module" src="js/search.js"></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleMenu = document.getElementById('floating-menu-toggle');
-            const menuItemsContainer = document.getElementById('floating-menu-items');
-            const principalButton = toggleMenu ? toggleMenu.querySelector('.boton-principal') : null;
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleMenu = document.getElementById('floating-menu-toggle');
+        const menuItemsContainer = document.getElementById('floating-menu-items');
+        const principalButton = toggleMenu ? toggleMenu.querySelector('.boton-principal') : null;
+        
+        // cambio
+        let lastClickTime = 0;
+
+        if (principalButton && menuItemsContainer && toggleMenu) {
             
-            if (principalButton && menuItemsContainer && toggleMenu) {
-                
-                principalButton.addEventListener('click', (event) => {
-                    event.preventDefault(); 
-                    toggleMenu.classList.toggle('open');
-                });
-                
-                const elementosQueCierran = menuItemsContainer.querySelectorAll('div.menu-item:not(.modo-switch-flotante)');
-                
-                elementosQueCierran.forEach(item => {
-                    item.addEventListener('click', (event) => {
-                        event.stopPropagation(); 
-                        
-                        const clicEnIconoCaja = event.target.closest('.icono-caja');
-                        
-                        if (clicEnIconoCaja) {
-                            console.log('¡Acción del icono activada!');
-                            if (toggleMenu.classList.contains('open')) {
-                                toggleMenu.classList.remove('open');
-                            }
-                        }
-                    });
-                });
-                
-                document.addEventListener('click', (event) => {
-                    if (toggleMenu.classList.contains('open')) {
-                        
-                        const isClickInsideMenu = toggleMenu.contains(event.target);
-                        
-                        if (!isClickInsideMenu) {
+            principalButton.addEventListener('click', (event) => {
+                event.preventDefault(); 
+
+                const currentTime = new Date().getTime();
+                if (currentTime - lastClickTime < 300) {
+                    return;
+                }
+                lastClickTime = currentTime;
+
+                toggleMenu.classList.toggle('open');
+            });
+            
+            const elementosQueCierran = menuItemsContainer.querySelectorAll('div.menu-item:not(.modo-switch-flotante)');
+            
+            elementosQueCierran.forEach(item => {
+                item.addEventListener('click', (event) => {
+                    event.stopPropagation(); 
+                    
+                    const clicEnIconoCaja = event.target.closest('.icono-caja');
+                    
+                    if (clicEnIconoCaja) {
+                        console.log('¡Acción del icono activada!');
+                        if (toggleMenu.classList.contains('open')) {
                             toggleMenu.classList.remove('open');
-                            console.log('Menú cerrado por clic exterior.');
                         }
                     }
                 });
-            }
-        });
-    </script>
+            });
+            
+            document.addEventListener('click', (event) => {
+                if (toggleMenu.classList.contains('open')) {
+                    const isClickInsideMenu = toggleMenu.contains(event.target);
+                    
+                    if (!isClickInsideMenu) {
+                        toggleMenu.classList.remove('open');
+                        console.log('Menú cerrado por clic exterior.');
+                    }
+                }
+            });
+        }
+    });
+</script>
     
 </body>
 </html>

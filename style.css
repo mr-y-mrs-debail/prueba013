@@ -148,6 +148,7 @@ background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%);
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
+    outline: none;
     z-index: 50; 
 }
 
@@ -168,13 +169,15 @@ background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%);
     display: inline-block;
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
     transform: rotate(0deg);
+    backface-visibility: hidden;
+    will-change: transform;
 }
 
 .menu-items {
-background: rgba(255, 255, 255, 0.08);backdrop-filter: blur(25px) saturate(180%);
-backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(255, 255, 255, 0.08);backdrop-filter: blur(25px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-border-radius: 12px;
+    border-radius: 12px;
     padding: 15px;     
     position: absolute;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -199,7 +202,8 @@ border-radius: 12px;
     position: relative; 
     opacity: 0; 
     transform: translateY(20px);   
-transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);    flex-direction: column; 
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);    
+    flex-direction: column; 
     align-items: center;
     text-decoration: none;
     pointer-events: none; 
@@ -266,15 +270,12 @@ transform: scale(1) translateY(0);
 
 /* Buscador ____________________________________________________________________________________________________________________________ */
 
-/* Actualiza esta parte inicial */
 .search-option,
 #close-search,
 .search-container-principal,
 #search-input-principal,
 .dropdown { 
-    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
-                transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-                visibility 0.5s;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 #default-view.wrapper {
@@ -299,44 +300,48 @@ transform: scale(1) translateY(0);
 
 .lupa {
     position: absolute;
-    display: flex;
     top: 50%;
     right: 50%;
     transform: translate(-50%, -50%);
-    width: 1.6rem;
-    height: 1.6rem;
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transition: all 0.3s ease;
+    will-change: transform, opacity;
 }
 
 .show-search .lupa {
-    opacity: 0; 
-    transform: translate(-50%, -50%) rotate(90deg) scale(0.5); 
-    visibility: hidden; 
-    pointer-events: none; 
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
 }
 
 .search-container-principal {
     position: absolute;
     top: calc(env(safe-area-inset-top) + 35px);
-    width: 100%;
-    max-width: 300px;
-    display: flex;
-    justify-content: center; 
-    align-items: center;
+    width: 90%;
+    max-width: 400px;
     left: 50%;
+    transform: translate(-50%, -20px) scale(0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     z-index: 100;    
     opacity: 0; 
+    visibility: hidden;
     pointer-events: none; 
-    transform: translate(-50%, -10px) scale(0.95); 
-    filter: blur(4px);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.input-relative-wrapper {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
 }
 
 .show-search .search-container-principal {
-    opacity: 1; 
-    pointer-events: auto; 
-    transform: translate(-50%, 0) scale(1); 
-    filter: blur(0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(-50%, 0) scale(1);
 }
 
 #search-input-principal {
@@ -344,7 +349,7 @@ transform: scale(1) translateY(0);
     background: transparent;    
     color: var(--cbarrita);
     width: 100%; 
-    padding: 10px 40px 10px 20px; 
+    padding: 10px 40px 10px 15px; 
     border-radius: 50px;   
     border: 1px solid var(--tertiary-color, rgba(182, 179, 179, 0.3));
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -360,33 +365,27 @@ transform: scale(1) translateY(0);
 }
 
 #close-search {
-    color: var(--tertiary-color);
-    text-shadow: 0 0 1px var(--dark);  
-    font-size: 20px;
-    line-height: 45px;
-    height: 45px;
-    width: 50px; 
-    text-align: center;
-    cursor: pointer;
-    z-index: 5;
-    opacity: 0; 
+    position: relative;
+    flex-shrink: 0;
+    width: 40px; 
+    height: 40px;
+    left: -30px;
+    margin-left: 0;
+    line-height: 40px;
+    margin: 0;
+    opacity: 0;
+    transform: scale(0.5) rotate(-90deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--secondary-color);
     border-radius: 50%;
-    border: none;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);  
-    visibility: hidden; 
-    transform: rotate(90deg) scale(0.5);
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);    
-    margin-left: -25px;
-    margin-right: 15px;
-    transform: rotate(-90deg) scale(0.5);
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .show-search #close-search {
-    opacity: 1; 
-    transform: rotate(0deg) scale(1); 
-    visibility: visible; 
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
 }
 
 #clear-search-input {
@@ -2306,19 +2305,13 @@ ul li.playing {
 }
 
 .heart-container .checkbox {
-    -webkit-appearance: none;
-    appearance: none;    
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 0;
     opacity: 0;
-    cursor: pointer;
     z-index: 10;
-    display: block !important;
+    cursor: pointer;
+    margin: 0;
 }
 
 .svg-container {
@@ -2331,54 +2324,38 @@ ul li.playing {
 .heart-container {
     width: 28px;
     height: 28px;
-    margin-right: 20px; 
-    margin-left: -10px;
-    cursor: pointer;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    vertical-align: middle;
+    cursor: pointer;
+    margin-left: 5px; 
+    margin-right: 10px;
+    transition: transform 0.2s ease;
 }
 
 .heart-container:active {
-    transform: scale(0.85);
-    transition: transform 0.1s;
+    transform: scale(0.9);
 }
 
 .heart-container .svg-container {
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
 }
 
 .heart-container .svg-outline,
 .heart-container .svg-filled {
-    fill: var(--corazon); 
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .heart-container .svg-filled {
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     fill: #ff4757 !important;
-    position: absolute !important;
-    top: 0;
-    left: 0;
-    width: 100% !important;
-    height: 100% !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    display: none !important;
-    transform: scale(0);
     opacity: 0;
+    transform: scale(0);
 }
 
 .heart-container .svg-filled[style*="display: block"] {
@@ -2389,12 +2366,8 @@ ul li.playing {
 }
 
 .heart-container .svg-outline {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
+    fill: #ffffff !important;
+    opacity: 1;
 }
 
 .heart-container .checkbox {
@@ -2402,13 +2375,13 @@ ul li.playing {
 }
 
 .heart-container .checkbox:checked ~ .svg-container .svg-filled {
-    opacity: 1 !important;
-    transform: scale(1) !important;
-    visibility: visible !important;
+    opacity: 1;
+    transform: scale(1);
 }
 
 .heart-container .checkbox:checked ~ .svg-container .svg-outline {
-    fill: #ff4757 !important;
+    opacity: 0;
+    transform: scale(1.2);
 }
 
 @keyframes heartPop {
@@ -2650,4 +2623,251 @@ ul li.playing {
     opacity: 1;
     bottom: 160px;
 }
+
+
+
+/* import { getFirestore, doc, updateDoc, increment, getDoc } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js';
+import { allMusic } from './music-list.js';
+import { musicIndex, loadMusic, playMusic, musicName, musicArtist, ulTag, setMusicAndPlay } from './script.js'; 
+
+const db = getFirestore();
+const albumId = 'nombreDelAlbum';
+
+// Variable para el control de parpadeo en móviles
+let lastClickSearch = 0;
+
+const fuseOptions = { 
+    keys: ['name', 'artist'], 
+    threshold: 0.3, 
+    ignoreAccents: true 
+};
+const fuse = new Fuse(allMusic, fuseOptions);
+
+function debounce(func, delay) {
+    let timer;
+    return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+function throttle(func, limit) {
+    let lastFunc;
+    let lastRan;
+    return function(...args) {
+        if (!lastRan) {
+            func.apply(this, args);
+            lastRan = Date.now();
+        } else {
+            clearTimeout(lastFunc);
+            lastFunc = setTimeout(function() {
+                if (Date.now() - lastRan >= limit) {
+                    func.apply(this, args);
+                    lastRan = Date.now();
+                }
+            }, limit - (Date.now() - lastRan));
+        }
+    };
+}
+
+function removeAccents(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function isCurrentSong(songName, songArtist) {
+    return removeAccents(musicName.innerHTML.toLowerCase()).includes(removeAccents(songName.toLowerCase())) && 
+           removeAccents(musicArtist.innerText.toLowerCase()).includes(removeAccents(songArtist.toLowerCase()));
+}
+
+function selectSongByName(songName, songArtist) {
+    const songIndex = allMusic.findIndex(song => 
+        removeAccents(song.name.toLowerCase()) === removeAccents(songName.toLowerCase()) && 
+        removeAccents(song.artist.toLowerCase()) === removeAccents(songArtist.toLowerCase())
+    );
+
+    if (songIndex !== -1) {
+        setMusicAndPlay(songIndex);
+        
+        const uiElements = {
+            defaultView: document.getElementById("default-view"),
+            suggestP: document.getElementById("suggestions-container-principal"),
+            inputP: document.getElementById("search-input-principal"),
+            inputS: document.getElementById("search-input-songs"),
+            suggestS: document.getElementById("suggestions-container-songs")
+        };
+
+        if (uiElements.defaultView) uiElements.defaultView.classList.remove("show-search");
+        if (uiElements.suggestP) uiElements.suggestP.style.display = 'none';
+        if (uiElements.inputP) uiElements.inputP.value = '';
+        if (uiElements.suggestS) uiElements.suggestS.style.display = 'none';
+        if (uiElements.inputS) uiElements.inputS.value = '';
+    }
+}
+
+function handleStickyCloseIcon() {
+    const closeIconSticky = document.getElementById('close-all-songs-list-sticky');
+    if (!closeIconSticky) return;
+    const scrollThreshold = 200; 
+    closeIconSticky.style.display = window.scrollY > scrollThreshold ? 'block' : 'none';
+}
+
+export function searchPrincipal(searchInput) {
+    const suggestionsContainerPrincipal = document.getElementById("suggestions-container-principal");
+    
+    if (!suggestionsContainerPrincipal || typeof Fuse === 'undefined') return;
+
+    const queryText = searchInput.value.trim();
+    const searchQuery = removeAccents(queryText.toLowerCase());
+    
+    if (searchQuery.length === 0) {
+        suggestionsContainerPrincipal.innerHTML = '';
+        suggestionsContainerPrincipal.style.display = 'none';
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    const results = fuse.search(searchQuery);
+
+    if (results.length > 0) {
+        results.forEach(({ item: song }) => {
+            const suggestionItem = document.createElement('div');
+            suggestionItem.classList.add('suggestion-item');
+            
+            const playing = isCurrentSong(song.name, song.artist);
+            suggestionItem.innerHTML = playing ? 
+                `<strong>${song.name} - ${song.artist}</strong>` : 
+                `${song.name} - ${song.artist}`;
+            
+            suggestionItem.addEventListener("click", () => {
+                selectSongByName(song.name, song.artist);
+            });
+            fragment.appendChild(suggestionItem);
+        });
+    } else {
+        const noResultsDiv = document.createElement('div');
+        noResultsDiv.setAttribute('style', 'padding: 30px 0; text-align: center;');
+        noResultsDiv.innerHTML = '¡Ups!<br>Parece que no tenemos esa canción mi amor!.';
+        fragment.appendChild(noResultsDiv);
+    }
+
+    suggestionsContainerPrincipal.innerHTML = '';
+    suggestionsContainerPrincipal.appendChild(fragment);
+    suggestionsContainerPrincipal.style.display = 'block';
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const elements = {
+        searchOption: document.getElementById("search-option"),
+        defaultView: document.getElementById("default-view"),
+        inputP: document.getElementById("search-input-principal"),
+        closeSearch: document.getElementById("close-search"),
+        suggestP: document.getElementById("suggestions-container-principal"),
+        originalCloseBtn: document.getElementById('close-all-songs-list-top'),
+        stickyCloseBtn: document.getElementById('close-all-songs-list-sticky'),
+        allSongsContainer: document.getElementById('all-songs-container'),
+        clearBtn: document.getElementById("clear-search-input")
+    };
+
+    const closeSongsList = () => {
+        if (elements.allSongsContainer) {
+            elements.allSongsContainer.style.display = 'none'; 
+            window.removeEventListener('scroll', throttledSticky);
+        }
+    };
+
+    const throttledSticky = throttle(handleStickyCloseIcon, 100);
+
+    if (elements.originalCloseBtn) elements.originalCloseBtn.addEventListener('click', closeSongsList);
+    if (elements.stickyCloseBtn) elements.stickyCloseBtn.addEventListener('click', closeSongsList);
+
+    if (elements.searchOption && elements.defaultView && elements.inputP) {
+        
+        // Lógica de apertura con anti-parpadeo
+        elements.searchOption.addEventListener("click", (e) => {
+            e.preventDefault();
+            
+            const currentTime = Date.now();
+            if (currentTime - lastClickSearch < 300) return;
+            lastClickSearch = currentTime;
+
+            elements.defaultView.classList.add("show-search");
+            
+            // Esperamos un poco a que la animación de CSS termine para dar el foco
+            setTimeout(() => {
+                elements.inputP.focus();
+            }, 350);
+
+            if (elements.suggestP) elements.suggestP.style.display = 'none';
+        });
+
+        if (elements.closeSearch) {
+            elements.closeSearch.addEventListener("click", (e) => {
+                e.preventDefault();
+                
+                const currentTime = Date.now();
+                if (currentTime - lastClickSearch < 300) return;
+                lastClickSearch = currentTime;
+
+                elements.defaultView.classList.remove("show-search");
+                elements.inputP.value = '';
+                if (elements.clearBtn) elements.clearBtn.style.display = "none";
+                if (elements.suggestP) {
+                    elements.suggestP.innerHTML = "";
+                    elements.suggestP.style.display = 'none';
+                }
+            });
+        }
+
+        elements.inputP.addEventListener("input", debounce(function() {
+            searchPrincipal(this);
+        }, 150)); 
+    }
+
+    // Lógica del botón de borrar (Clear)
+    if (elements.clearBtn && elements.inputP) {
+        elements.inputP.addEventListener("input", () => {
+            elements.clearBtn.style.display = elements.inputP.value.length > 0 ? "block" : "none";
+        });
+
+        elements.clearBtn.addEventListener("click", () => {
+            elements.inputP.value = "";
+            elements.inputP.focus();
+            elements.clearBtn.style.display = "none";
+            if (elements.suggestP) {
+                elements.suggestP.innerHTML = "";
+                elements.suggestP.style.display = "none";
+            }
+        });
+    }
+
+    window.addEventListener('scroll', throttledSticky);
+});
+
+function updatePlayingSong() {
+    const allLiTags = ulTag.querySelectorAll("li");
+    allLiTags.forEach((li) => {
+        li.classList.remove("playing");
+        const name = li.querySelector("span");
+        const artist = li.querySelector("p");
+        if (name) name.style.fontWeight = "normal";
+        if (artist) artist.style.fontWeight = "normal";
+    });
+
+    const currentLi = ulTag.querySelector(`li[li-index="${musicIndex + 1}"]`);
+    if (currentLi) {
+        currentLi.classList.add("playing");
+        const n = currentLi.querySelector("span");
+        const a = currentLi.querySelector("p");
+        if (n) n.style.fontWeight = "bold";
+        if (a) a.style.fontWeight = "bold";
+    }
+    
+    ['principal', 'songs'].forEach(type => {
+        const suggest = document.getElementById(`suggestions-container-${type}`);
+        const input = document.getElementById(`search-input-${type}`);
+        if (suggest && suggest.style.display === 'block' && input && input.value.length > 0) {
+            input.dispatchEvent(new Event('input'));
+        }
+    });
+} */
 

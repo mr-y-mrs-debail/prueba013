@@ -1,6 +1,8 @@
-
 import { allMusic } from './music-list.js';
 import { musicIndex, musicName, musicArtist, setMusicAndPlay } from './script.js'; 
+
+// Variable para evitar el parpadeo en móviles (anti-rebote)
+let lastClickSearch = 0;
 
 const fuseOptions = { 
     keys: ['name', 'artist'], 
@@ -121,16 +123,37 @@ document.addEventListener("DOMContentLoaded", () => {
         // Abrir buscador
         searchOption.addEventListener("click", (e) => {
             e.preventDefault();
+            
+            // Control de anti-parpadeo
+            const currentTime = Date.now();
+            if (currentTime - lastClickSearch < 300) return;
+            lastClickSearch = currentTime;
+
             defaultView.classList.add("show-search");
-            inputP.focus();
+            
+            // Foco con retraso para que la animación de CSS sea fluida
+            setTimeout(() => {
+                inputP.focus();
+            }, 350);
         });
 
         // Cerrar buscador
         if (closeSearch) {
-            closeSearch.addEventListener("click", () => {
+            closeSearch.addEventListener("click", (e) => {
+                e.preventDefault();
+
+                // Control de anti-parpadeo
+                const currentTime = Date.now();
+                if (currentTime - lastClickSearch < 300) return;
+                lastClickSearch = currentTime;
+
                 defaultView.classList.remove("show-search");
                 inputP.value = '';
-                if (suggestP) suggestP.style.display = 'none';
+                if (clearBtn) clearBtn.style.display = "none";
+                if (suggestP) {
+                    suggestP.innerHTML = "";
+                    suggestP.style.display = 'none';
+                }
             });
         }
 
