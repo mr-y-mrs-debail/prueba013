@@ -179,24 +179,27 @@ progressArea.addEventListener("click", (e) => {
 
 mainAudio.addEventListener("ended", () => nextMusic());
 
+
 repeatBtn.addEventListener("click", () => {
-    let title = repeatBtn.getAttribute("title");
-    switch(title) {
-        case "Modo aleatorio": //Playback shuffled
-            repeatBtn.className = "bi bi-arrow-left-right";
-            repeatBtn.setAttribute("title", "Lista en bucle");
+    // cambio
+    let mode = repeatBtn.dataset.mode || "Modo aleatorio"; 
+    
+    switch(mode) {
+        case "Modo aleatorio":
+            repeatBtn.className = "bi bi-arrow-left-right active"; // cambio
+            repeatBtn.dataset.mode = "Lista en bucle";
             showToast("Lista en bucle"); 
             isShuffle = false;
             break;
         case "Lista en bucle": 
-            repeatBtn.className = "bi bi-repeat-1";
-            repeatBtn.setAttribute("title", "Canción en bucle");
+            repeatBtn.className = "bi bi-repeat-1 active";
+            repeatBtn.dataset.mode = "Canción en bucle";
             showToast("Canción en bucle");
             isShuffle = false;
             break;
         default:
-            repeatBtn.className = "bi bi-shuffle";
-            repeatBtn.setAttribute("title", "Modo aleatorio");
+            repeatBtn.className = "bi bi-shuffle active";
+            repeatBtn.dataset.mode = "Modo aleatorio";
             showToast("Modo aleatorio");
             isShuffle = true;
             shuffleMusicInitial();
@@ -212,10 +215,16 @@ function showToast(message) {
         document.body.appendChild(toast);
     }
     
+    // agregado
+    toast.classList.remove("show");
+    void toast.offsetWidth;
+    
     toast.innerText = message;
     toast.classList.add("show");
 
-    setTimeout(() => {
+    if (toast.timeout) clearTimeout(toast.timeout);
+    
+    toast.timeout = setTimeout(() => {
         toast.classList.remove("show");
     }, 2000);
 }
