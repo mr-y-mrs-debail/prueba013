@@ -354,6 +354,8 @@ const musicListDiv = document.querySelector(".music-list");
 const moreMusicBtn = document.getElementById("more-music");
 const closeMoreMusic = document.getElementById("close");
 
+let lastActiveAlphabetA = null;
+
 function updatePlayingSong() {
     const currentSong = allMusic[musicIndex];
     if (!currentSong) return;
@@ -395,8 +397,7 @@ function updatePlayingSong() {
     }
 
     if (lastActiveAlphabetA) {
-        lastActiveAlphabetA.style.fontWeight = "normal";
-        lastActiveAlphabetA.style.color = "";
+        lastActiveAlphabetA.classList.remove("active-letter");
     }
 
     const alphabetElement = document.getElementById('alphabet');
@@ -404,11 +405,10 @@ function updatePlayingSong() {
         const firstChar = removeAccents(currentSong.name).charAt(0).toUpperCase();
         const currentSongInitial = (firstChar >= 'A' && firstChar <= 'Z') ? firstChar : '#';
         
-        const currentLetterLink = alphabetElement.querySelector(`a[data-letter="${currentSongInitial}"]`);
-        if (currentLetterLink) {
-            currentLetterLink.style.fontWeight = 'bold';
-            currentLetterLink.style.color = 'var(--secondary-color)'; 
-            lastActiveAlphabetA = currentLetterLink;
+        const currentLetterItem = alphabetElement.querySelector(`.alphabet-item[data-letter="${currentSongInitial}"]`);
+        if (currentLetterItem) {
+            currentLetterItem.classList.add("active-letter");
+            lastActiveAlphabetA = currentLetterItem;
         }
     }
 }
@@ -439,11 +439,15 @@ function loadAlphabet() {
 
         const liTag = document.createElement('li');
         liTag.classList.add('alphabet-item');
+        liTag.setAttribute('data-letter', letter);
         
         const aTag = document.createElement('a');
         aTag.href = "#";
-        aTag.setAttribute('data-letter', letter);
-        aTag.innerHTML = `${letter} <small>(<span>${songCount}</span>)</small>`;
+        
+        aTag.innerHTML = `
+            <span class="letter">${letter}</span>
+            <span class="count">${songCount}</span>
+        `;
         
         if (songCount > 0) {
             aTag.addEventListener('click', (e) => {
@@ -451,13 +455,12 @@ function loadAlphabet() {
                 loadSongsByLetter(letter);
             });
         } else {
-            aTag.style.opacity = "0.3";
-            aTag.style.pointerEvents = "none";
+            liTag.classList.add('empty');
+            aTag.addEventListener('click', (e) => e.preventDefault());
         }
         
         liTag.appendChild(aTag);
         alphabetElement.appendChild(liTag);
-        
         observer.observe(liTag);
     });
 }
@@ -510,6 +513,8 @@ function loadSongsByLetter(letter) {
         
         updatePlayingSong();
         songListUl.scrollTop = 0;
+        
+        history.pushState({ view: 'songsByLetter', letter: letter }, '', `#${letter}`);
     }
 }
 
@@ -519,7 +524,6 @@ function displayAlphabetList() {
     
     songListUl.innerHTML = "";     
     alphabetListDiv.style.display = "flex"; 
-    alphabetListDiv.style.flexDirection = "column";
     
     songListUl.style.display = "none";   
     backToAlphabetBtn.classList.add("hidden");
@@ -547,13 +551,9 @@ function selectSong(element) {
     }
 }
 
-if (moreMusicBtn) {
-    moreMusicBtn.addEventListener("click", showAlphabetView);
-}
-
-if (closeMoreMusic) {
-    closeMoreMusic.addEventListener("click", closeMusicList);
-}
+// Event Listeners
+if (moreMusicBtn) moreMusicBtn.addEventListener("click", showAlphabetView);
+if (closeMoreMusic) closeMoreMusic.addEventListener("click", closeMusicList);
 
 if (backToAlphabetBtn) {
     backToAlphabetBtn.addEventListener("click", () => {
@@ -576,6 +576,9 @@ window.addEventListener('load', () => {
     const hash = window.location.hash;
     if (hash === '#abecedario') {
         showAlphabetView();
+    } else if (hash.length === 2 || hash === '##') {
+        showAlphabetView();
+        loadSongsByLetter(hash.replace('#', ''));
     } else {
         history.replaceState(null, '', ' ');
     }
