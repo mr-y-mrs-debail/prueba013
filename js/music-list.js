@@ -18,6 +18,13 @@ export const allMusic = [
         artist: "Mägo de Oz",
         img: "music-3",
         src: "music-3"
+    },
+        
+    {
+        name: "Rumble",
+        artist: "Skrillex",
+        img: "music-4",
+        src: "music-4"
     }
 
 ];

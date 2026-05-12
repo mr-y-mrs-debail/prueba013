@@ -1,7 +1,6 @@
 import { allMusic } from './music-list.js';
 import { musicIndex, musicName, musicArtist, setMusicAndPlay } from './script.js'; 
 
-// Variable para evitar el parpadeo en móviles (anti-rebote)
 let lastClickSearch = 0;
 
 const fuseOptions = { 
@@ -10,7 +9,6 @@ const fuseOptions = {
     ignoreAccents: true 
 };
 
-// Inicializamos Fuse con el array local
 const fuse = new Fuse(allMusic, fuseOptions);
 
 // --- UTILIDADES ---
@@ -26,7 +24,6 @@ function removeAccents(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-// Verifica si la canción en la lista de búsqueda es la que está sonando
 function isCurrentSong(songName, songArtist) {
     if (!musicName || !musicArtist) return false;
     const currentName = removeAccents(musicName.innerText.toLowerCase());
@@ -35,7 +32,6 @@ function isCurrentSong(songName, songArtist) {
            currentArtist.includes(removeAccents(songArtist.toLowerCase()));
 }
 
-// Selecciona y reproduce
 function selectSongByName(songName, songArtist) {
     const songIndex = allMusic.findIndex(song => 
         removeAccents(song.name.toLowerCase()) === removeAccents(songName.toLowerCase()) && 
@@ -47,7 +43,6 @@ function selectSongByName(songName, songArtist) {
             setMusicAndPlay(songIndex);
         }
         
-        // Limpiar UI tras seleccionar
         const uiElements = {
             defaultView: document.getElementById("default-view"),
             suggestP: document.getElementById("suggestions-container-principal"),
@@ -60,7 +55,6 @@ function selectSongByName(songName, songArtist) {
     }
 }
 
-// --- LÓGICA DE BÚSQUEDA PRINCIPAL ---
 export function searchPrincipal(searchInput) {
     const suggestionsContainerPrincipal = document.getElementById("suggestions-container-principal");
     
@@ -85,11 +79,14 @@ export function searchPrincipal(searchInput) {
             
             const playing = isCurrentSong(song.name, song.artist);
             
-            // Mantenemos tu diseño de "Playing"
+            if (playing) {
+                suggestionItem.classList.add('active');
+            }
+
             suggestionItem.innerHTML = `
-                <div class="search-result-content ${playing ? 'is-playing' : ''}">
-                    <span class="song-name">${playing ? `<strong>${song.name}</strong>` : song.name}</span>
-                    <span class="song-artist">${song.artist}</span>
+                <div class="suggestion-info">
+                    <strong>${song.name}</strong>
+                    <span>${song.artist}</span>
                 </div>
             `;
             
@@ -100,7 +97,7 @@ export function searchPrincipal(searchInput) {
         });
     } else {
         const noResultsDiv = document.createElement('div');
-        noResultsDiv.setAttribute('style', 'padding: 30px 20px; text-align: center; color: #888;');
+        noResultsDiv.setAttribute('style', 'padding: 30px 20px; text-align: center; color: rgba(255,255,255,0.5); font-size: 0.9rem;');
         noResultsDiv.innerHTML = '¡Ups!<br>No tenemos esa canción por aquí amor.';
         fragment.appendChild(noResultsDiv);
     }
@@ -124,14 +121,12 @@ document.addEventListener("DOMContentLoaded", () => {
         searchOption.addEventListener("click", (e) => {
             e.preventDefault();
             
-            // Control de anti-parpadeo
             const currentTime = Date.now();
             if (currentTime - lastClickSearch < 300) return;
             lastClickSearch = currentTime;
 
             defaultView.classList.add("show-search");
             
-            // Foco con retraso para que la animación de CSS sea fluida
             setTimeout(() => {
                 inputP.focus();
             }, 350);
@@ -142,7 +137,6 @@ document.addEventListener("DOMContentLoaded", () => {
             closeSearch.addEventListener("click", (e) => {
                 e.preventDefault();
 
-                // Control de anti-parpadeo
                 const currentTime = Date.now();
                 if (currentTime - lastClickSearch < 300) return;
                 lastClickSearch = currentTime;
@@ -157,10 +151,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Input con Debounce para rendimiento
+        // Input con Debounce
         inputP.addEventListener("input", debounce(function() {
             searchPrincipal(this);
-            // Mostrar/Ocultar botón X de limpiar
             if (clearBtn) {
                 clearBtn.style.display = this.value.length > 0 ? "block" : "none";
             }

@@ -279,32 +279,31 @@ function updateLikeDislikeButtons(liked, disliked) {
     if (likeCheckbox) likeCheckbox.checked = liked;
     if (dislikeCheckbox) dislikeCheckbox.checked = disliked;
 
-    // LÓGICA DEL CORAZÓN (LIKE)
     if (heartOutline && heartFilled) {
         heartOutline.style.display = liked ? "none" : "block";
         heartFilled.style.display = liked ? "block" : "none";
+        
         if (liked) {
             heartFilled.style.fill = "#ff4757";
-            // Si tienes una clase de animación para el corazón, añádela aquí
             heartFilled.classList.add('animate-heart'); 
         } else {
             heartFilled.classList.remove('animate-heart');
         }
     }
 
-    // LÓGICA DEL PULGAR (DISLIKE)
     if (thumbRegular && thumbSolid) {
-        thumbRegular.style.display = disliked ? "none" : "block";
-        thumbSolid.style.display = disliked ? "block" : "none";
-        
         if (disliked) {
-            thumbSolid.style.fill = "var(--cbarrita)"; 
+            thumbRegular.style.opacity = "0";
             thumbSolid.style.opacity = "1";
-            // AÑADIMOS LA ANIMACIÓN
+            thumbSolid.style.display = "block";
             thumbSolid.classList.add('animate-dislike');
         } else {
-            // QUITAMOS LA ANIMACIÓN para que pueda repetirse la próxima vez
+            thumbRegular.style.opacity = "1";
+            thumbSolid.style.opacity = "0";
             thumbSolid.classList.remove('animate-dislike');
+            setTimeout(() => {
+                if (!dislikeCheckbox.checked) thumbSolid.style.display = "none";
+            }, 200);
         }
     }
 }
@@ -327,6 +326,7 @@ document.querySelector(".heart-container")?.addEventListener('click', (e) => {
 
 document.querySelector(".dislike-container")?.addEventListener('click', (e) => {
     if(e.target.type === 'checkbox') return;
+    
     e.preventDefault();
     e.stopPropagation();
     handleDislike();
@@ -342,69 +342,56 @@ function removeAccents(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-const alphabet = ["#", ... "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")];
+
+
+
+
+const alphabet = ["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")];
 const backToAlphabetBtn = document.getElementById('back-to-alphabet');
 const alphabetListDiv = document.querySelector(".alphabet-list");
 const songListUl = document.getElementById("playlist"); 
 const musicListDiv = document.querySelector(".music-list");
+const moreMusicBtn = document.getElementById("more-music");
+const closeMoreMusic = document.getElementById("close");
 
 function updatePlayingSong() {
     const currentSong = allMusic[musicIndex];
     if (!currentSong) return;
 
-    if (lastActiveUlLi) {
-        lastActiveUlLi.classList.remove("playing");
-        const prevName = lastActiveUlLi.querySelector("span");
-        const prevArtist = lastActiveUlLi.querySelector("p");
-        if (prevName) prevName.style.fontWeight = "normal";
-        if (prevArtist) prevArtist.style.fontWeight = "normal";
-    }
+    const allLi_ulTag = ulTag.querySelectorAll("li");
+    allLi_ulTag.forEach(li => {
+        li.classList.remove("playing");
+        const span = li.querySelector("span");
+        const p = li.querySelector("p");
+        if (span) span.style.fontWeight = "normal";
+        if (p) p.style.fontWeight = "normal";
+    });
 
     const currentLi_ulTag = ulTag.querySelector(`li[li-index="${musicIndex + 1}"]`);
     if (currentLi_ulTag) {
         currentLi_ulTag.classList.add("playing");
-        const currentNameTag = currentLi_ulTag.querySelector("span");
-        const currentArtistTag = currentLi_ulTag.querySelector("p");
-        if (currentNameTag) currentNameTag.style.fontWeight = "bold";
-        if (currentArtistTag) currentArtistTag.style.fontWeight = "bold";
-        lastActiveUlLi = currentLi_ulTag; // Guardamos la referencia
+        const span = currentLi_ulTag.querySelector("span");
+        if (span) span.style.fontWeight = "bold";
     }
 
-    if (lastActiveSongListLi) {
-        lastActiveSongListLi.classList.remove("playing");
-        const prevName = lastActiveSongListLi.querySelector("span");
-        const prevArtist = lastActiveSongListLi.querySelector("p");
-        if (prevName) prevName.style.fontWeight = "normal";
-        if (prevArtist) prevArtist.style.fontWeight = "normal";
-        lastActiveSongListLi.style.color = '';
-    }
+    const allLi_songList = songListUl.querySelectorAll("li");
+    allLi_songList.forEach(li => {
+        li.classList.remove("playing");
+        const span = li.querySelector("span");
+        if (span) {
+            span.style.fontWeight = "normal";
+            span.style.color = "";
+        }
+    });
 
     const currentLi_songListUl = songListUl.querySelector(`li[li-index="${musicIndex + 1}"]`);
     if (currentLi_songListUl && songListUl.style.display === "block") {
         currentLi_songListUl.classList.add("playing");
-        const currentNameTag = currentLi_songListUl.querySelector("span");
-        const currentArtistTag = currentLi_songListUl.querySelector("p");
-        if (currentNameTag) {
-            currentNameTag.style.fontWeight = "bold";
-            currentNameTag.style.color = 'var(--cor-principal)'; 
+        const span = currentLi_songListUl.querySelector("span");
+        if (span) {
+            span.style.fontWeight = "bold";
+            span.style.color = 'var(--secondary-color)'; 
         }
-        if (currentArtistTag) {
-            currentArtistTag.style.fontWeight = "bold";
-            currentArtistTag.style.color = 'var(--cor-principal)';
-        }
-        lastActiveSongListLi = currentLi_songListUl;
-    }
-
-    const suggestionsContainerPrincipal = document.getElementById("suggestions-container-principal");
-    if (suggestionsContainerPrincipal?.style.display === 'block') {
-        const searchInputPrincipal = document.getElementById("search-input-principal");
-        if (searchInputPrincipal?.value.length > 0) searchPrincipal(searchInputPrincipal); 
-    }
-    
-    const suggestionsContainerSongs = document.getElementById("suggestions-container-songs");
-    if (suggestionsContainerSongs?.style.display === 'block') {
-        const searchInputSongs = document.getElementById("search-input-songs");
-        if (searchInputSongs?.value.length > 0) searchSongs(searchInputSongs);
     }
 
     if (lastActiveAlphabetA) {
@@ -412,104 +399,38 @@ function updatePlayingSong() {
         lastActiveAlphabetA.style.color = "";
     }
 
-    const alphabetList = document.getElementById('alphabet');
-    if (alphabetList && currentSong.name) {
+    const alphabetElement = document.getElementById('alphabet');
+    if (alphabetElement && currentSong.name) {
         const firstChar = removeAccents(currentSong.name).charAt(0).toUpperCase();
         const currentSongInitial = (firstChar >= 'A' && firstChar <= 'Z') ? firstChar : '#';
-        const escapedInitial = CSS.escape(currentSongInitial);
-
-        const currentLetterLink = alphabetList.querySelector(`#count-${escapedInitial}`)?.parentNode;
+        
+        const currentLetterLink = alphabetElement.querySelector(`a[data-letter="${currentSongInitial}"]`);
         if (currentLetterLink) {
             currentLetterLink.style.fontWeight = 'bold';
-            currentLetterLink.style.color = 'var(--cor-principal)'; 
+            currentLetterLink.style.color = 'var(--secondary-color)'; 
             lastActiveAlphabetA = currentLetterLink;
         }
     }
 }
 
-function displayAlphabetList() {
-    songListUl.innerHTML = "";     
-    alphabetListDiv.style.display = "block";
-    songListUl.style.display = "none";   
-    backToAlphabetBtn.classList.add("hidden");
-    loadAlphabet();
-}
-
-function showAlphabetList() {
-    displayAlphabetList();
-    
-    const state = { view: 'alphabet' };
-    if (window.location.hash !== '#abecedario') {
-        history.pushState(state, '', '#abecedario');
-    } else if (!history.state || history.state.view !== 'alphabet') {
-        history.replaceState(state, '', '#abecedario');
-    }
-}
-
-function loadSongsByLetter(letter) {
-    songListUl.innerHTML = "";
-    const sortedAllMusic = [...allMusic].sort((a, b) => {
-        const nameA = removeAccents(a.name).toUpperCase();
-        const nameB = removeAccents(b.name).toUpperCase();
-        return nameA.localeCompare(nameB);
-    });
-
-    const filteredSongs = (letter === "#")
-        ? sortedAllMusic.filter(song => /^[^a-zA-Z]/.test(song.name))
-        : sortedAllMusic.filter(song => removeAccents(song.name).toUpperCase().startsWith(letter));
-
-    if (filteredSongs.length > 0) {
-        const fragment = document.createDocumentFragment();
-
-        filteredSongs.forEach(song => {
-            const songIndexInAll = allMusic.findIndex(s => s.src === song.src);
-            const liTag = document.createElement('li');
-            liTag.setAttribute('li-index', songIndexInAll + 1);            
-            liTag.innerHTML = `
-                <div class="row">
-                    <span>${song.name}</span>
-                    <p>${song.artist}</p>
-                </div>
-                <audio class="${song.src}" src="music/${song.src}.mp3"></audio> `;
-            
-            liTag.addEventListener("click", () => selectSong(liTag));
-            fragment.appendChild(liTag); 
-        });
-        songListUl.appendChild(fragment); 
-
-        alphabetListDiv.style.display = "none";
-        songListUl.style.display = "block";
-        backToAlphabetBtn.classList.remove("hidden");
-        
-        updatePlayingSong();
-        
-        const state = { view: 'songsByLetter', letter: letter };
-        history.pushState(state, '', `#canciones-letra/${encodeURIComponent(letter)}`);
-
-    } else {
-        songListUl.innerHTML = "<li>No hay canciones que empiecen con esa letra.</li>";        
-        alphabetListDiv.style.display = "none";
-        songListUl.style.display = "block";
-        backToAlphabetBtn.classList.remove("hidden");
-        
-        const state = { view: 'songsByLetter', letter: letter };
-        history.pushState(state, '', `#canciones-letra/${encodeURIComponent(letter)}`);
-    }
-
-    musicListDiv.classList.add("show");
-}
-
 function loadAlphabet() {
-    const alphabetList = document.getElementById('alphabet');
-    alphabetList.innerHTML = '';
+    const alphabetElement = document.getElementById('alphabet');
+    if (!alphabetElement) return;
+    alphabetElement.innerHTML = '';
     
-    const currentSong = allMusic[musicIndex];
-    let currentSongInitial = null;
+    const observerOptions = {
+        root: alphabetElement,
+        threshold: 0.1
+    };
 
-    if (currentSong && currentSong.name) {
-        const firstChar = removeAccents(currentSong.name).charAt(0).toUpperCase();
-        currentSongInitial = (firstChar >= 'A' && firstChar <= 'Z') ? firstChar : '#';
-    }
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
 
     alphabet.forEach(letter => {
         const songCount = (letter === "#")
@@ -517,176 +438,151 @@ function loadAlphabet() {
             : allMusic.filter(song => removeAccents(song.name).toUpperCase().startsWith(letter)).length;
 
         const liTag = document.createElement('li');
+        liTag.classList.add('alphabet-item');
+        
         const aTag = document.createElement('a');
         aTag.href = "#";
-        aTag.innerHTML = `${letter} (<span id="count-${letter}">${songCount}</span>)`;
+        aTag.setAttribute('data-letter', letter);
+        aTag.innerHTML = `${letter} <small>(<span>${songCount}</span>)</small>`;
         
-        if (letter === currentSongInitial) {
-            aTag.style.fontWeight = 'bold';
-            aTag.style.color = 'var(--cor-principal)'; 
-        }
-
         if (songCount > 0) {
-            aTag.addEventListener('click', (event) => {
-                event.preventDefault();
+            aTag.addEventListener('click', (e) => {
+                e.preventDefault();
                 loadSongsByLetter(letter);
             });
+        } else {
+            aTag.style.opacity = "0.3";
+            aTag.style.pointerEvents = "none";
         }
         
         liTag.appendChild(aTag);
-        alphabetList.appendChild(liTag);
+        alphabetElement.appendChild(liTag);
+        
+        observer.observe(liTag);
     });
+}
+
+function loadSongsByLetter(letter) {
+    songListUl.innerHTML = "";
+
+    const titleTag = document.querySelector(".title-list");
+    if(titleTag) titleTag.textContent = `Lista con ${letter}`;
+        
+    const filteredSongs = (letter === "#")
+        ? allMusic.filter(song => /^[^a-zA-Z]/.test(song.name))
+        : allMusic.filter(song => removeAccents(song.name).toUpperCase().startsWith(letter));
+
+    if (filteredSongs.length > 0) {
+        const songObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { root: songListUl, threshold: 0.05 });
+
+        const fragment = document.createDocumentFragment();
+        
+        filteredSongs.forEach(song => {
+            const songIndexInAll = allMusic.findIndex(s => s.src === song.src);
+            const liTag = document.createElement('li');
+            liTag.classList.add('song-item');
+            liTag.setAttribute('li-index', songIndexInAll + 1);
+            
+            liTag.innerHTML = `
+                <div class="row">
+                    <span>${song.name}</span>
+                    <p>${song.artist}</p>
+                </div>
+            `;
+            
+            liTag.addEventListener("click", () => selectSong(liTag));
+            fragment.appendChild(liTag);
+            songObserver.observe(liTag);
+        });
+
+        songListUl.appendChild(fragment); 
+
+        alphabetListDiv.style.display = "none";
+        songListUl.style.display = "block";
+        backToAlphabetBtn.classList.remove("hidden");
+        
+        updatePlayingSong();
+        songListUl.scrollTop = 0;
+    }
+}
+
+function displayAlphabetList() {
+    const titleTag = document.querySelector(".title-list");
+    if(titleTag) titleTag.textContent = "Lista de canciones";
+    
+    songListUl.innerHTML = "";     
+    alphabetListDiv.style.display = "flex"; 
+    alphabetListDiv.style.flexDirection = "column";
+    
+    songListUl.style.display = "none";   
+    backToAlphabetBtn.classList.add("hidden");
+    
+    loadAlphabet();
+}
+
+function showAlphabetView() {
+    musicListDiv.classList.add("show");
+    displayAlphabetList();
+    history.pushState({ view: 'alphabet' }, '', '#abecedario');
 }
 
 function closeMusicList() {
     musicListDiv.classList.remove("show");
-    alphabetListDiv.style.display = "none";
-    songListUl.style.display = "none";
-    backToAlphabetBtn.classList.add("hidden");    
     history.replaceState(null, '', window.location.origin + window.location.pathname);
-}
-
-if (typeof moreMusicBtn !== 'undefined') {
-    moreMusicBtn.addEventListener("click", () => {
-        musicListDiv.classList.add("show");
-        showAlphabetList();
-    });
-}
-
-backToAlphabetBtn.addEventListener("click", () => {
-    history.back();
-});
-
-if (typeof closeMoreMusic !== 'undefined') {
-    closeMoreMusic.addEventListener("click", () => {
-        closeMusicList();
-    });
 }
 
 function selectSong(element) {
     const indexToPlay = parseInt(element.getAttribute('li-index')) - 1;
-    
-    if (indexToPlay !== -1 && typeof setMusicAndPlay === 'function') {
-        musicIndex = indexToPlay;
-        setMusicAndPlay(musicIndex, true); 
+    if (indexToPlay >= 0) {
+        setMusicAndPlay(indexToPlay); 
         closeMusicList(); 
-        
         updatePlayingSong(); 
     }
 }
 
-window.addEventListener('popstate', function(event) {
+if (moreMusicBtn) {
+    moreMusicBtn.addEventListener("click", showAlphabetView);
+}
+
+if (closeMoreMusic) {
+    closeMoreMusic.addEventListener("click", closeMusicList);
+}
+
+if (backToAlphabetBtn) {
+    backToAlphabetBtn.addEventListener("click", () => {
+        displayAlphabetList();
+        history.pushState({ view: 'alphabet' }, '', '#abecedario');
+    });
+}
+
+window.addEventListener('popstate', (event) => {
     const state = event.state;
-    
     if (!state) {
         closeMusicList();
         return;
     }
-
-    switch (state.view) {
-        case 'alphabet':
-            alphabetListDiv.style.display = "block";
-            songListUl.style.display = "none";   
-            backToAlphabetBtn.classList.add("hidden");
-            loadAlphabet();
-            musicListDiv.classList.add("show");
-            updatePlayingSong();
-            break;
-        case 'songsByLetter':
-            if (state.letter) {
-                 loadSongsByLetter(state.letter);
-                 history.replaceState(state, '', `#canciones-letra/${encodeURIComponent(state.letter)}`);
-            }
-            break;
-        default:
-             closeMusicList();
-             break;
-    }
+    if (state.view === 'alphabet') displayAlphabetList();
+    if (state.view === 'songsByLetter') loadSongsByLetter(state.letter);
 });
 
 window.addEventListener('load', () => {
     const hash = window.location.hash;
-    
-    if (hash.startsWith('#abecedario')) {
-        displayAlphabetList();
-        musicListDiv.classList.add("show");
-        history.replaceState({ view: 'alphabet' }, '', '#abecedario'); 
-    } else if (hash.startsWith('#canciones-letra/')) {
-        const letter = decodeURIComponent(hash.split('/')[1]);
-        if (letter) {
-            loadSongsByLetter(letter);
-            musicListDiv.classList.add("show");
-            history.replaceState({ view: 'songsByLetter', letter: letter }, '', hash); 
-        } else {
-            closeMusicList();
-        }
+    if (hash === '#abecedario') {
+        showAlphabetView();
     } else {
-        displayAlphabetList();    
-        musicListDiv.classList.remove("show"); 
-        history.replaceState(null, '', window.location.origin + window.location.pathname);
+        history.replaceState(null, '', ' ');
     }
-    
-    if (typeof updatePlayingSong === 'function') {
-        updatePlayingSong(); 
-    }
+    updatePlayingSong();
 });
 
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        currentUser = user;
-        console.log("Usuario autenticado:", currentUser.uid);
-
-        if (typeof currentSongId !== 'undefined' && currentSongId) {
-            loadInitialLikesDislikes(currentSongId);
-        }
-
-        startFirestoreListener();
-
-    } else {
-        currentUser = null;
-        console.log("Usuario no autenticado.");
-        updateLikeDislikeButtons(false, false);
-    }
-});
-
-function updateArtistAndSongHighlight() {
-    if (typeof allMusic === 'undefined' || typeof musicIndex === 'undefined' || !allMusic[musicIndex]) return;
-
-    const currentSong = allMusic[musicIndex];
-    const currentArtist = currentSong.artist.split(/ ft | x | & /)[0].toLowerCase().trim();
-    
-    const albumItems = document.querySelectorAll('#album-list-items .album-item');
-    const explicitArtists = Array.from(albumItems)
-        .map(item => (item.dataset.artist || "").toLowerCase())
-        .filter(art => art !== 'otros' && art !== 'me gusta' && art !== 'no me gusta');
-
-    const isPlayingOtherArtist = !explicitArtists.includes(currentArtist);
-
-    document.querySelectorAll('#album-list-items .album-item, #favorites-list-items .album-item').forEach(item => {
-        item.classList.remove('playing-artist');
-        const itemArtist = (item.dataset.artist || "").toLowerCase();
-
-        if (itemArtist === currentArtist && itemArtist !== 'me gusta' && itemArtist !== 'no me gusta') {
-            item.classList.add('playing-artist');
-        } 
-        else if (itemArtist === 'otros' && isPlayingOtherArtist) {
-            item.classList.add('playing-artist');
-        }
-    });
-
-    const songListContainer = document.getElementById('song-list-container');
-    if (songListContainer && (songListContainer.style.display === 'block' || songListContainer.style.display === 'flex')) {
-        document.querySelectorAll('.song-item').forEach(songItem => {
-            songItem.classList.remove('playing-song');
-            
-            if (parseInt(songItem.dataset.index) === musicIndex) {
-                songItem.classList.add('playing-song');
-            }
-        });
-    }
-}
-
-window.updateArtistAndSongHighlight = updateArtistAndSongHighlight;
+window.updatePlayingSong = updatePlayingSong;
 
 document.addEventListener('DOMContentLoaded', function() {
     const folderIcon = document.getElementById('folder-icon');
@@ -722,8 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
         favoritesContainer.style.display = 'block'; 
         albumContainer.style.display = 'none'; 
         songListContainer.style.display = 'none';
-        
-        updateArtistAndSongHighlight(); 
+        if (typeof updateArtistAndSongHighlight === "function") updateArtistAndSongHighlight(); 
     }
 
     function showAlbumList() {
@@ -733,8 +628,7 @@ document.addEventListener('DOMContentLoaded', function() {
         albumContainer.style.display = 'block';
         favoritesContainer.style.display = 'none'; 
         songListContainer.style.display = 'none';
-        
-        updateArtistAndSongHighlight();
+        if (typeof updateArtistAndSongHighlight === "function") updateArtistAndSongHighlight();
     }
 
     function showSongList(artistName, callerType) {
@@ -743,17 +637,11 @@ document.addEventListener('DOMContentLoaded', function() {
         albumContainer.style.display = 'none';
         favoritesContainer.style.display = 'none'; 
         songListContainer.style.display = 'block';
-        
         previousView = callerType; 
     }
 
-    function hideFavoritesList() {
-        closeAllViews();
-    }
-
-    function hideAlbumList() {
-        closeAllViews();
-    }
+    function hideFavoritesList() { closeAllViews(); }
+    function hideAlbumList() { closeAllViews(); }
 
     function closeSongListAction() {
         if (previousView === 'favorites') {
@@ -763,20 +651,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    if (favoritesTrigger) {
-        favoritesTrigger.addEventListener('click', showFavoritesList);
-    }
-    if (closeFavoritesList) {
-        closeFavoritesList.addEventListener('click', hideFavoritesList); 
-    }
+    if (favoritesTrigger) favoritesTrigger.addEventListener('click', showFavoritesList);
+    if (closeFavoritesList) closeFavoritesList.addEventListener('click', hideFavoritesList); 
 
     folderIcon.addEventListener('click', showAlbumList);
     folderOpenIcon.addEventListener('click', hideAlbumList);
     closeAlbumList.addEventListener('click', hideAlbumList);
 
-    if (closeSongList) {
-        closeSongList.addEventListener('click', closeSongListAction); 
-    }
+    if (closeSongList) closeSongList.addEventListener('click', closeSongListAction); 
 
     blurOverlay.addEventListener('click', function(event) {
         if (event.target === blurOverlay) {
@@ -788,34 +670,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-let isFetchingSongs = false;
+    function renderSongList(songs) {
+        songListDiv.innerHTML = '';
+        if (songs.length === 0) {
+            songListDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5);">No hay canciones aquí todavía.</div>';
+            return;
+        }
 
-albumItems.forEach(item => {
-    item.addEventListener('click', async function() { 
-        if (isFetchingSongs) return;
-        const albumArtist = this.dataset.artist;
-        songListDiv.innerHTML = '<div style="color: gray; padding: 10px;">Cargando canciones...</div>';
-        let songsToShow = []; 
+        songs.sort((a, b) => a.name.localeCompare(b.name));
 
-        try {
-            isFetchingSongs = true;
-            
-            if (albumArtist.toLowerCase() === 'me gusta') {
-                const songsCollectionRef = collection(db, 'albums', albumId, 'songs');
-                const q = query(songsCollectionRef, where('likes', '>', 0));
-                const querySnapshot = await getDocs(q);
-                const firestoreLikedSongs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                songsToShow = allMusic.filter(localSong => firestoreLikedSongs.some(fs => fs.src === localSong.src));
-            } else if (albumArtist.toLowerCase() === 'no me gusta') {
-                const songsCollectionRef = collection(db, 'albums', albumId, 'songs');
-                const q = query(songsCollectionRef, where('dislikes', '>', 0));
-                const querySnapshot = await getDocs(q);
-                const firestoreDislikedSongs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                songsToShow = allMusic.filter(localSong => firestoreDislikedSongs.some(fs => fs.src === localSong.src));
-            } else if (albumArtist.toLowerCase() === 'otros') {
+        const fragment = document.createDocumentFragment();
+        songs.forEach((song) => {
+            const songIndexInAll = allMusic.findIndex(s => s.src === song.src);
+            const songItem = document.createElement('div');
+            songItem.classList.add('song-item');
+            songItem.setAttribute('data-index', songIndexInAll); 
+
+            songItem.style.cssText = `cursor: pointer; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 5px;`;
+
+            songItem.innerHTML = `
+                <div class="song-name-text" style="color: #ffffff; font-weight: 500;">• ${song.name}</div>
+                <div style="font-size: 0.85em; color: rgba(255,255,255,0.5); margin-left: 1.2em;">${song.artist}</div>
+            `;
+
+            songItem.addEventListener('click', function() {
+                const indexToPlay = parseInt(this.getAttribute('data-index'));
+                if (window.setMusicAndPlay) window.setMusicAndPlay(indexToPlay, true);
+                closeAllViews(); 
+                if (typeof updateArtistAndSongHighlight === "function") updateArtistAndSongHighlight(); 
+            });
+
+            fragment.appendChild(songItem);
+        });
+        songListDiv.appendChild(fragment);
+    }
+
+    albumItems.forEach(item => {
+        item.addEventListener('click', function() { 
+            const albumArtist = this.dataset.artist.toLowerCase();
+            let songsToShow = []; 
+
+            if (albumArtist === 'otros') {
                 const explicitArtists = Array.from(albumItems)
-                    .map(item => item.dataset.artist.toLowerCase())
+                    .map(i => i.dataset.artist.toLowerCase())
                     .filter(art => art !== 'otros' && art !== 'me gusta' && art !== 'no me gusta');
+                
                 songsToShow = allMusic.filter(song => {
                     const firstArtist = song.artist.split(/ ft | x | & /)[0].toLowerCase().trim();
                     return !explicitArtists.includes(firstArtist);
@@ -823,140 +722,30 @@ albumItems.forEach(item => {
             } else {
                 songsToShow = allMusic.filter(song => {
                     const firstArtist = song.artist.split(/ ft | x | & /)[0].toLowerCase().trim();
-                    return firstArtist === albumArtist.toLowerCase();
+                    return firstArtist === albumArtist;
                 });
             } 
 
-            songListDiv.innerHTML = '';
-
-            if (songsToShow.length > 0) {
-                songsToShow.sort((a, b) => {
-                    const nameA = removeAccents(a.name).toUpperCase();
-                    const nameB = removeAccents(b.name).toUpperCase();
-                    return nameA.localeCompare(nameB);
-                });
-                
-                const fragment = document.createDocumentFragment();
-
-                songsToShow.forEach((song) => {
-                    const songIndexInAll = allMusic.findIndex(s => s.src === song.src);
-                    const songItem = document.createElement('div');
-                    songItem.classList.add('song-item');
-                    
-                    songItem.setAttribute('data-index', songIndexInAll); 
-
-                    songItem.style.cssText = `
-                        cursor: pointer; 
-                        padding-bottom: 5px; 
-                        width: 80%; 
-                        border-bottom: 1px solid rgba(255,255,255,0.1);
-                        margin-bottom: 5px;
-                    `;
-
-                    songItem.innerHTML = `
-                        <div class="song-name-text">• ${song.name}</div>
-                        <div style="font-size: 0.8em; color: #696969; margin-left: 1.2em;">${song.artist}</div>
-                    `;
-
-                    songItem.addEventListener('click', function() {
-                        const indexToPlay = parseInt(this.getAttribute('data-index'));
-                        window.setMusicAndPlay(indexToPlay, true);
-                        closeAllViews(); 
-                        updateArtistAndSongHighlight(); 
-                    });
-
-                    fragment.appendChild(songItem);
-                });
-
-                songListDiv.appendChild(fragment);
-
-                setTimeout(() => {
-                    updateArtistAndSongHighlight();
-                }, 0);
-
-            } else {
-                songListDiv.innerHTML = `<div>No hay canciones para ${albumArtist}.</div>`;
-            } 
-            showSongList(albumArtist, 'artists'); 
-        } catch (error) {
-            console.error("Error:", error);
-            songListDiv.innerHTML = '<div>Error al cargar.</div>';
-        } finally {
-            isFetchingSongs = false;
-        }
+            renderSongList(songsToShow);
+            showSongList(this.dataset.artist, 'artists'); 
+        });
     });
-});
 
-favoritesAlbumItems.forEach(item => {
-    item.addEventListener('click', async function() {
-        if (isFetchingSongs) return;
-        const listType = this.dataset.artist; 
-        songListDiv.innerHTML = '<div style="color: gray; padding: 10px; text-align: center;">Buscando tus favoritos...</div>';
-        let songsToShow = []; 
-        
-        try {
-            isFetchingSongs = true;
-            const songsCollectionRef = collection(db, 'albums', albumId, 'songs'); 
-
-            if (listType.toLowerCase() === 'me gusta') {
-                const q = query(songsCollectionRef, where('likes', '>', 0));
-                const querySnapshot = await getDocs(q);
-                const firestoreLikedSongs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                songsToShow = allMusic.filter(localSong => firestoreLikedSongs.some(fs => fs.src === localSong.src));
-            } else if (listType.toLowerCase() === 'no me gusta') {
-                const q = query(songsCollectionRef, where('dislikes', '>', 0));
-                const querySnapshot = await getDocs(q);
-                const firestoreDislikedSongs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                songsToShow = allMusic.filter(localSong => firestoreDislikedSongs.some(fs => fs.src === localSong.src));
-            }
-
-            songListDiv.innerHTML = '';
-
-            if (songsToShow.length > 0) {
-                songsToShow.sort((a, b) => {
-                    const nameA = removeAccents(a.name).toUpperCase();
-                    const nameB = removeAccents(b.name).toUpperCase();
-                    return nameA.localeCompare(nameB);
-                });
-
-                const fragment = document.createDocumentFragment();
-                songsToShow.forEach((song) => {
-                    const songIndexInAll = allMusic.findIndex(s => s.src === song.src);
-                    const songItem = document.createElement('div');
-                    songItem.classList.add('song-item');
-                    songItem.dataset.index = songIndexInAll; 
-                    songItem.style.cssText = `cursor: pointer; padding-bottom: 5px; width: 80%; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px;`;
-                    songItem.innerHTML = `
-                        <div>• ${song.name}</div>
-                        <div style="font-size: 0.8em; color: #696969; margin-left: 1em;">${song.artist}</div>
-                    `;
-                    songItem.addEventListener('click', function() {
-                        window.setMusicAndPlay(parseInt(this.dataset.index), true); 
-                        closeAllViews(); 
-                        updateArtistAndSongHighlight();
-                    });
-                    fragment.appendChild(songItem);
-                });
-                songListDiv.appendChild(fragment);
-                updateArtistAndSongHighlight();
-            } else {
-                songListDiv.innerHTML = `<div style="text-align: center; padding: 20px;">No has agregado ningún ${listType} amor.</div>`;
-            } 
+    favoritesAlbumItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const listType = this.dataset.artist; 
+            
+            let songsToShow = allMusic.slice(0, 5); 
+            
+            renderSongList(songsToShow);
             showSongList(listType, 'favorites'); 
-        } catch (error) {
-            console.error("Error cargando favoritos:", error);
-            songListDiv.innerHTML = '<div style="color: red; text-align: center;">Error de conexión.</div>';
-        } finally {
-            isFetchingSongs = false;
-        }
+        });
     });
-});
-
 });
 
 // Canciones en lista y orden__________________________________________________________________________________________________________
 
-const openAllSongsBtn = document.querySelector('#open-all-songs');
+//const openAllSongsBtn = document.querySelector('#open-all-songs');
 const allSongsContainer = document.getElementById('all-songs-container');
 const closeAllSongsList = document.getElementById('close-all-songs-list');
 const allSongsListItems = document.getElementById('all-songs-list-items');
