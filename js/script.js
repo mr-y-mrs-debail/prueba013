@@ -601,7 +601,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const favoritesTrigger = document.querySelector('.menu-item.item-4'); 
     const favoritesContainer = document.getElementById('favorites-container');
     const closeFavoritesList = document.getElementById('close-favorites-list');
-    const favoritesAlbumItems = document.querySelectorAll('#favorites-list-items .album-item'); 
+    const favoritesAlbumItems = document.querySelectorAll('#favorites-list-items .album-item1'); 
 
     let previousView = null; 
 
@@ -615,81 +615,49 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showFavoritesList() {
-        folderIcon.style.display = 'none';
-        folderOpenIcon.style.display = 'inline-block';
         blurOverlay.style.display = 'flex';
-        favoritesContainer.style.display = 'block'; 
+        favoritesContainer.style.display = 'flex'; 
         albumContainer.style.display = 'none'; 
         songListContainer.style.display = 'none';
-        if (typeof updateArtistAndSongHighlight === "function") updateArtistAndSongHighlight(); 
     }
 
     function showAlbumList() {
-        folderIcon.style.display = 'none';
-        folderOpenIcon.style.display = 'inline-block';
         blurOverlay.style.display = 'flex';
-        albumContainer.style.display = 'block';
+        albumContainer.style.display = 'flex';
         favoritesContainer.style.display = 'none'; 
         songListContainer.style.display = 'none';
-        if (typeof updateArtistAndSongHighlight === "function") updateArtistAndSongHighlight();
     }
 
-    function showSongList(artistName, callerType) {
-        artistNameDisplay.textContent = artistName;
+    function showSongList(title, callerType) {
+        artistNameDisplay.textContent = title;
         blurOverlay.style.display = 'flex';
         albumContainer.style.display = 'none';
         favoritesContainer.style.display = 'none'; 
-        songListContainer.style.display = 'block';
+        songListContainer.style.display = 'flex';
         previousView = callerType; 
     }
 
-    function hideFavoritesList() { closeAllViews(); }
-    function hideAlbumList() { closeAllViews(); }
-
-    function closeSongListAction() {
-        if (previousView === 'favorites') {
-            showFavoritesList(); 
-        } else {
-            showAlbumList();     
-        }
-    }
-    
-    if (favoritesTrigger) favoritesTrigger.addEventListener('click', showFavoritesList);
-    if (closeFavoritesList) closeFavoritesList.addEventListener('click', hideFavoritesList); 
-
-    folderIcon.addEventListener('click', showAlbumList);
-    folderOpenIcon.addEventListener('click', hideAlbumList);
-    closeAlbumList.addEventListener('click', hideAlbumList);
-
-    if (closeSongList) closeSongList.addEventListener('click', closeSongListAction); 
-
-    blurOverlay.addEventListener('click', function(event) {
-        if (event.target === blurOverlay) {
-            if (songListContainer.style.display === 'block') {
-                 closeSongListAction(); 
-            } else {
-                closeAllViews();
-            }
-        }
-    });
-
-    function renderSongList(songs) {
+    function renderSongList(songs, isComingSoon = false) {
         songListDiv.innerHTML = '';
-        if (songs.length === 0) {
-            songListDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.5);">No hay canciones aquí todavía.</div>';
+
+        if (isComingSoon || songs.length === 0) {
+            songListDiv.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.6);">
+                    <i class="bi bi-info-circle" style="display: block; font-size: 2em; margin-bottom: 15px;"></i>
+                    <p style="font-size: 1.1em; font-weight: 500;">No has agregado canciones todavía.</p>
+                </div>
+            `;
             return;
         }
 
         songs.sort((a, b) => a.name.localeCompare(b.name));
-
         const fragment = document.createDocumentFragment();
+        
         songs.forEach((song) => {
             const songIndexInAll = allMusic.findIndex(s => s.src === song.src);
             const songItem = document.createElement('div');
             songItem.classList.add('song-item');
             songItem.setAttribute('data-index', songIndexInAll); 
-
-            songItem.style.cssText = `cursor: pointer; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 5px;`;
 
             songItem.innerHTML = `
                 <div class="song-name-text" style="color: #ffffff; font-weight: 500;">• ${song.name}</div>
@@ -700,7 +668,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const indexToPlay = parseInt(this.getAttribute('data-index'));
                 if (window.setMusicAndPlay) window.setMusicAndPlay(indexToPlay, true);
                 closeAllViews(); 
-                if (typeof updateArtistAndSongHighlight === "function") updateArtistAndSongHighlight(); 
             });
 
             fragment.appendChild(songItem);
@@ -716,7 +683,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (albumArtist === 'otros') {
                 const explicitArtists = Array.from(albumItems)
                     .map(i => i.dataset.artist.toLowerCase())
-                    .filter(art => art !== 'otros' && art !== 'me gusta' && art !== 'no me gusta');
+                    .filter(art => art !== 'otros');
                 
                 songsToShow = allMusic.filter(song => {
                     const firstArtist = song.artist.split(/ ft | x | & /)[0].toLowerCase().trim();
@@ -729,7 +696,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             } 
 
-            renderSongList(songsToShow);
+            renderSongList(songsToShow, false); 
             showSongList(this.dataset.artist, 'artists'); 
         });
     });
@@ -737,12 +704,27 @@ document.addEventListener('DOMContentLoaded', function() {
     favoritesAlbumItems.forEach(item => {
         item.addEventListener('click', function() {
             const listType = this.dataset.artist; 
-            
-            let songsToShow = allMusic.slice(0, 5); 
-            
-            renderSongList(songsToShow);
+            renderSongList([], true); 
             showSongList(listType, 'favorites'); 
         });
+    });
+
+    if (favoritesTrigger) favoritesTrigger.addEventListener('click', showFavoritesList);
+    if (closeFavoritesList) closeFavoritesList.addEventListener('click', closeAllViews); 
+    folderIcon.addEventListener('click', showAlbumList);
+    if (closeAlbumList) closeAlbumList.addEventListener('click', closeAllViews);
+    if (closeSongList) closeSongList.addEventListener('click', closeSongListAction); 
+
+    function closeSongListAction() {
+        if (previousView === 'favorites') showFavoritesList(); 
+        else showAlbumList();
+    }
+
+    blurOverlay.addEventListener('click', (e) => {
+        if (e.target === blurOverlay) {
+            if (songListContainer.style.display === 'flex') closeSongListAction();
+            else closeAllViews();
+        }
     });
 });
 
