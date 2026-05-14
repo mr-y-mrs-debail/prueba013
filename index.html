@@ -215,9 +215,6 @@
             <div class="album-item" data-artist="Linkin Park">
                 <i class="bi bi-file-earmark-music-fill"> Linkin Park</i>
             </div>
-            <div class="album-item" data-artist="Zion">
-                <i class="bi bi-file-earmark-music-fill"> Zion & Lennox</i>
-            </div>
             <div class="album-item" data-artist="Otros">
                 <i class="bi bi-file-earmark-music-fill"> Otros</i>
             </div>
@@ -328,74 +325,50 @@
     <script type="module" src="js/script.js"></script>    
     <script type="module" src="js/search.js"></script>
     
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    const toggleMenu = document.getElementById('floating-menu-toggle');
-    const menuItemsContainer = document.getElementById('floating-menu-items');
-    const principalButton = toggleMenu ? toggleMenu.querySelector('.boton-principal') : null;
-    
-    let lastClickTime = 0;
-
-    if (principalButton && menuItemsContainer && toggleMenu) {
-        
-        // 1. Abrir/Cerrar el Nav con el botón principal (+)
-        principalButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            const currentTime = new Date().getTime();
-            if (currentTime - lastClickTime < 300) return;
-            lastClickTime = currentTime;
-
-            toggleMenu.classList.toggle('open');
-        });
-
-        // 2. Lógica para los ítems (Biblioteca, Artistas, Lista A-Z, Favoritos)
-        const elementosMenu = menuItemsContainer.querySelectorAll('.menu-item');
-
-        elementosMenu.forEach(item => {
-            item.addEventListener('click', (event) => {
-                // Al estar el evento en 'item', capturamos clics en icono y texto por igual
-                event.stopPropagation(); 
-
-                const id = item.id;
-
-                // Identificación por ID o por clase para el caso de "Lista A-Z"
-                if (id === 'open-all-songs') {
-                    console.log("Abriendo Biblioteca...");
-                } 
-                else if (id === 'open-albums-menu') {
-                    console.log("Abriendo Artistas...");
-                }
-                // Usamos la clase 'item-2' que ya tienes en el HTML para la Lista A-Z
-                else if (item.classList.contains('item-2')) {
-                    console.log("Abriendo Lista A-Z...");
-                    if (typeof showAlphabetView === "function") {
-                        showAlphabetView();
+   <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleMenu = document.getElementById('floating-menu-toggle');
+            const menuItemsContainer = document.getElementById('floating-menu-items');
+            const principalButton = toggleMenu ? toggleMenu.querySelector('.boton-principal') : null;
+            
+            if (principalButton && menuItemsContainer && toggleMenu) {
+                
+                principalButton.addEventListener('click', (event) => {
+                    event.preventDefault(); 
+                    toggleMenu.classList.toggle('open');
+                });
+                
+                const elementosQueCierran = menuItemsContainer.querySelectorAll('div.menu-item:not(.modo-switch-flotante)');
+                
+                elementosQueCierran.forEach(item => {
+                    item.addEventListener('click', (event) => {
+                        event.stopPropagation(); 
+                        
+                        const clicEnIconoCaja = event.target.closest('.icono-caja');
+                        
+                        if (clicEnIconoCaja) {
+                            console.log('¡Acción del icono activada!');
+                            if (toggleMenu.classList.contains('open')) {
+                                toggleMenu.classList.remove('open');
+                            }
+                        }
+                    });
+                });
+                
+                document.addEventListener('click', (event) => {
+                    if (toggleMenu.classList.contains('open')) {
+                        
+                        const isClickInsideMenu = toggleMenu.contains(event.target);
+                        
+                        if (!isClickInsideMenu) {
+                            toggleMenu.classList.remove('open');
+                            console.log('Menú cerrado por clic exterior.');
+                        }
                     }
-                }
-                else if (id === 'favorites-trigger') {
-                    console.log("Abriendo Favoritos...");
-                }
-
-                // Cerramos el menú tras la acción
-                toggleMenu.classList.remove('open');
-            });
-        });
-
-        // 3. Cierre por clic exterior
-        document.addEventListener('click', (event) => {
-            if (toggleMenu.classList.contains('open')) {
-                // Si el clic no está dentro del contenedor principal del nav, se cierra
-                if (!toggleMenu.contains(event.target)) {
-                    toggleMenu.classList.remove('open');
-                    console.log('Menú cerrado por clic exterior.');
-                }
+                });
             }
         });
-    }
-});
-</script>
+    </script>
     
 </body>
 </html>

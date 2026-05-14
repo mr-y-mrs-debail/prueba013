@@ -385,7 +385,7 @@ function updatePlayingSong() {
         const span = currentLi_songListUl.querySelector("span");
         if (span) {
             span.style.fontWeight = "bold";
-            span.style.color = 'var(--secondary-color)'; 
+            span.style.color = 'var(--cbarrita2)'; 
         }
     }
 
@@ -644,18 +644,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showFavoritesList() {
-        blurOverlay.style.display = 'flex';
-        favoritesContainer.style.display = 'flex'; 
-        albumContainer.style.display = 'none'; 
-        songListContainer.style.display = 'none';
-    }
+    blurOverlay.style.display = 'flex';
+    favoritesContainer.style.display = 'flex'; 
+    albumContainer.style.display = 'none'; 
+    songListContainer.style.display = 'none'; // <-- AGREGAR ESTA LÍNEA
+}
 
-    function showAlbumList() {
-        blurOverlay.style.display = 'flex';
-        albumContainer.style.display = 'flex';
-        favoritesContainer.style.display = 'none'; 
-        songListContainer.style.display = 'none';
-    }
+  function showAlbumList() {
+    blurOverlay.style.display = 'flex';
+    albumContainer.style.display = 'flex';
+    favoritesContainer.style.display = 'none'; 
+    songListContainer.style.display = 'none'; // <-- AGREGAR ESTA LÍNEA
+}
 
     function showSongList(title, callerType) {
         artistNameDisplay.textContent = title;
@@ -673,7 +673,7 @@ document.addEventListener('DOMContentLoaded', function() {
             songListDiv.innerHTML = `
                 <div style="text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.6);">
                     <i class="bi bi-info-circle" style="display: block; font-size: 2em; margin-bottom: 15px;"></i>
-                    <p style="font-size: 1.1em; font-weight: 500;">No has agregado canciones todavía.</p>
+                    <p style="font-size: 1.1em; font-weight: 500;">No has agregado canciones todavía amor.</p>
                 </div>
             `;
             return;
