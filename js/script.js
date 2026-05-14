@@ -37,7 +37,9 @@ window.addEventListener("load", () => {
     if (isShuffle) shuffleMusicInitial();
     loadMusic(musicIndex);
     
-    if (deviceDisplay) deviceDisplay.textContent = "PC"; 
+    if (deviceDisplay) {
+        deviceDisplay.innerHTML = '<i class="bi bi-pc-display"></i> PC';
+    } 
 });
 
 
@@ -269,41 +271,26 @@ window.updatePlayerColor = updatePlayerColor;
 const likeCheckbox = document.getElementById("like-checkbox");
 const dislikeCheckbox = document.getElementById("dislike-checkbox");
 
-const heartOutline = document.querySelector(".heart-container .svg-outline");
 const heartFilled = document.querySelector(".heart-container .svg-filled");
-
-const thumbRegular = document.querySelector(".dislike-container .dislike-empty");
 const thumbSolid = document.querySelector(".dislike-container .dislike-filled");
 
-function updateLikeDislikeButtons(liked, disliked) {
-    if (likeCheckbox) likeCheckbox.checked = liked;
-    if (dislikeCheckbox) dislikeCheckbox.checked = disliked;
 
-    if (heartOutline && heartFilled) {
-        heartOutline.style.display = liked ? "none" : "block";
-        heartFilled.style.display = liked ? "block" : "none";
-        
+function updateLikeDislikeButtons(liked, disliked) {
+    if (likeCheckbox) {
+        likeCheckbox.checked = liked;
         if (liked) {
-            heartFilled.style.fill = "#ff4757";
-            heartFilled.classList.add('animate-heart'); 
+            heartFilled.classList.add('animate-heart');
         } else {
             heartFilled.classList.remove('animate-heart');
         }
     }
 
-    if (thumbRegular && thumbSolid) {
+    if (dislikeCheckbox) {
+        dislikeCheckbox.checked = disliked;
         if (disliked) {
-            thumbRegular.style.opacity = "0";
-            thumbSolid.style.opacity = "1";
-            thumbSolid.style.display = "block";
             thumbSolid.classList.add('animate-dislike');
         } else {
-            thumbRegular.style.opacity = "1";
-            thumbSolid.style.opacity = "0";
             thumbSolid.classList.remove('animate-dislike');
-            setTimeout(() => {
-                if (!dislikeCheckbox.checked) thumbSolid.style.display = "none";
-            }, 200);
         }
     }
 }
@@ -325,17 +312,23 @@ document.querySelector(".heart-container")?.addEventListener('click', (e) => {
 });
 
 document.querySelector(".dislike-container")?.addEventListener('click', (e) => {
-    if(e.target.type === 'checkbox') return;
-    
-    e.preventDefault();
-    e.stopPropagation();
-    handleDislike();
+    if(e.target.type !== 'checkbox') {
+        const cb = e.currentTarget.querySelector('input[type="checkbox"]');
+        if (cb) cb.click();
+    }
 });
 
-function loadInitialLikesDislikes(songId) {
-    updateLikeDislikeButtons(false, false);
-}
+dislikeCheckbox?.addEventListener('change', (e) => {
+    if (e.target.checked) {
+        updateLikeDislikeButtons(false, true);
+    } else {
+        updateLikeDislikeButtons(false, false);
+    }
+});
 
+function loadInitialLikesDislikes(likedStatus, dislikedStatus) {
+    updateLikeDislikeButtons(likedStatus, dislikedStatus);
+}
 
 function removeAccents(str) {
     if (!str) return '';
