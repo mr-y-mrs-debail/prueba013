@@ -647,14 +647,14 @@ document.addEventListener('DOMContentLoaded', function() {
     blurOverlay.style.display = 'flex';
     favoritesContainer.style.display = 'flex'; 
     albumContainer.style.display = 'none'; 
-    songListContainer.style.display = 'none'; // <-- AGREGAR ESTA LÍNEA
+    songListContainer.style.display = 'none';
 }
 
   function showAlbumList() {
     blurOverlay.style.display = 'flex';
     albumContainer.style.display = 'flex';
     favoritesContainer.style.display = 'none'; 
-    songListContainer.style.display = 'none'; // <-- AGREGAR ESTA LÍNEA
+    songListContainer.style.display = 'none';
 }
 
     function showSongList(title, callerType) {
