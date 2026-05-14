@@ -1406,6 +1406,71 @@ ul li.playing {
     margin-top: 2px;
 }
 
+/* Botones de like y dislike */
+
+.song-item .row {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0;
+    padding: 10px 0;
+}
+
+.song-item:hover .row {
+     background: rgba(255, 255, 255, 0.05);
+}
+
+.song-item .col-8 {
+    flex: 1;
+    padding-right: 10px;
+    overflow: hidden;
+}
+
+.list-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.btn-action {
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+    padding: 5px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-action:active {
+    transform: scale(1.2); 
+}
+
+
+.btn-like {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.bi-heart-fill {
+    color: #ff4757 !important;
+    opacity: 1 !important;
+}
+
+.btn-dislike {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.bi-hand-thumbs-down-fill {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+.song-item span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
 @media (min-width: 992px) {    
 
     #alphabet {
@@ -1430,6 +1495,29 @@ ul li.playing {
     .music-list ul li {
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
+    .song-item .row {
+        padding: 12px 15px;
+        border-radius: 8px;
+        transition: background 0.2s ease;
+    }
+    .song-item:hover .row {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .list-actions {
+        gap: 20px;
+        min-width: 80px;
+        justify-content: flex-end;
+    }
+    .btn-action {
+        font-size: 1.3rem;
+        opacity: 0.7;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .song-item:hover .btn-action {
+        opacity: 1;
+    }
 }
 
 /* Lista de albums ______________________________________________________________________________________________ */
@@ -1445,7 +1533,7 @@ ul li.playing {
     display: none;
 }
 
-#blur-overlay {
+/* #blur-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -1454,7 +1542,7 @@ ul li.playing {
     height: 100%;
     background-color: transparent;
     z-index: 50;
-}
+} */
 
 #album-container {
     position: fixed;
@@ -1688,7 +1776,6 @@ ul li.playing {
     overflow-y: auto;
     z-index: 60; 
 }
-
 
 #favorites-list-items {
     margin-top: 40px;

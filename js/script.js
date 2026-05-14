@@ -462,8 +462,8 @@ function loadSongsByLetter(letter) {
     songListUl.innerHTML = "";
 
     const titleTag = document.querySelector(".title-list");
-    if(titleTag) titleTag.textContent = `Lista con ${letter}`;
-        
+    if (titleTag) titleTag.textContent = `Lista con ${letter}`;
+
     const filteredSongs = (letter === "#")
         ? allMusic.filter(song => /^[^a-zA-Z]/.test(song.name))
         : allMusic.filter(song => removeAccents(song.name).toUpperCase().startsWith(letter));
@@ -479,34 +479,70 @@ function loadSongsByLetter(letter) {
         }, { root: songListUl, threshold: 0.05 });
 
         const fragment = document.createDocumentFragment();
-        
+
         filteredSongs.forEach(song => {
             const songIndexInAll = allMusic.findIndex(s => s.src === song.src);
             const liTag = document.createElement('li');
             liTag.classList.add('song-item');
             liTag.setAttribute('li-index', songIndexInAll + 1);
-            
+
+            // HTML
             liTag.innerHTML = `
-                <div class="row">
-                    <span>${song.name}</span>
-                    <p>${song.artist}</p>
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <span>${song.name}</span>
+                        <p>${song.artist}</p>
+                    </div>
+                    <div class="col-4 d-flex justify-content-end list-actions">
+                        <i class="btn-action btn-like bi ${song.isLiked ? 'bi-heart-fill' : 'bi-heart'}" 
+                           data-id="${song.id}" title="Me gusta"></i>
+                        <i class="btn-action btn-dislike bi ${song.isDisliked ? 'bi-hand-thumbs-down-fill' : 'bi-hand-thumbs-down'}" 
+                           data-id="${song.id}" title="No me gusta"></i>
+                    </div>
                 </div>
             `;
-            
-            liTag.addEventListener("click", () => selectSong(liTag));
+
+            liTag.addEventListener("click", (e) => {
+                if (!e.target.classList.contains('btn-action')) {
+                    selectSong(liTag);
+                }
+            });
+
+            // LIKE / DISLIKE
+            const likeBtn = liTag.querySelector('.btn-like');
+            const dislikeBtn = liTag.querySelector('.btn-dislike');
+
+            likeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (typeof handleLikeAction === "function") {
+                    handleLikeAction(song.id);
+                }
+                likeBtn.classList.toggle('bi-heart');
+                likeBtn.classList.toggle('bi-heart-fill');
+            });
+
+            dislikeBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                if (typeof handleDislikeAction === "function") {
+                    handleDislikeAction(song.id);
+                }
+                dislikeBtn.classList.toggle('bi-hand-thumbs-down');
+                dislikeBtn.classList.toggle('bi-hand-thumbs-down-fill');
+            });
+
             fragment.appendChild(liTag);
             songObserver.observe(liTag);
         });
 
-        songListUl.appendChild(fragment); 
+        songListUl.appendChild(fragment);
 
         alphabetListDiv.style.display = "none";
         songListUl.style.display = "block";
-        backToAlphabetBtn.classList.remove("hidden");
-        
+        if (backToAlphabetBtn) backToAlphabetBtn.classList.remove("hidden");
+
         updatePlayingSong();
         songListUl.scrollTop = 0;
-        
+
         history.pushState({ view: 'songsByLetter', letter: letter }, '', `#${letter}`);
     }
 }
