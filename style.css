@@ -294,13 +294,16 @@ background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%);
     width: 40px;
     height: 40px;
     z-index: 101;
+    overflow: visible; 
+    visibility: visible;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .show-search .dropdown {
     opacity: 0;
-    overflow: hidden;
     pointer-events: none;
     visibility: hidden;
+    transition: visibility 0s linear 0.3s, opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .lupa {
@@ -976,8 +979,8 @@ transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 .progress-bar::before { 
     content: ""; 
     position: absolute; 
-    height: 20px; 
-    width: 20px; 
+    height: 25px; 
+    width: 25px; 
     border-radius: 50%; 
     top: 50%; 
     right: -10px;   
@@ -2745,19 +2748,17 @@ ul li.playing {
     margin-bottom: 13px;
 }
 
-.song-details-actions svg {
-    cursor: pointer;
-    margin-left: 15px;
-    transition: color 0.3s ease;
-    position: relative;
-}
-
 .song-details-actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 5px;
     margin-top: -10px;
+}
+
+.song-details-actions svg {
+    cursor: pointer;
+    transition: color 0.3s ease;
 }
 
 .heart-container, .dislike-container {
@@ -2768,9 +2769,26 @@ ul li.playing {
     justify-content: center;
     position: relative;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent; 
+    -webkit-tap-highlight-color: transparent;     
+    -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    transform: translateZ(0);
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+}
+
+.heart-container {
+    margin-left: 5px; 
+    margin-right: 10px;
+    transition: transform 0.2s ease;
+}
+
+.dislike-container {
+    right: 13px;
+}
+
+.heart-container:active {
+    transform: scale(0.9);
 }
 
 .svg-container {
@@ -2783,44 +2801,44 @@ ul li.playing {
     position: relative;
 }
 
-.checkbox {
+.checkbox, .dislike-container input {
     position: absolute;
     width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
     opacity: 0;
-    z-index: 10;
     cursor: pointer;
+    z-index: 10;
     margin: 0;
     pointer-events: none;
 }
 
-.heart-container {
-    margin-left: 5px; 
-    margin-right: 10px;
-    transition: transform 0.2s ease;
-}
-
-.heart-container:active {
-    transform: scale(0.9);
-}
-
 .heart-container .svg-outline,
-.heart-container .svg-filled {
+.heart-container .svg-filled,
+.dislike-container .dislike-empty,
+.dislike-container .dislike-filled {
     position: absolute;
     width: 100%;
     height: 100%;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    top: 0;
+    left: 0;
+    will-change: transform, opacity;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 .heart-container .svg-filled {
     fill: #ff4757 !important;
     opacity: 0;
-    transform: scale(0);
+    transform: scale(0.01);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .heart-container .svg-outline {
     fill: #ffffff !important;
     opacity: 1;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 #like-checkbox:checked ~ .svg-container .svg-filled {
@@ -2840,63 +2858,20 @@ ul li.playing {
     100% { transform: scale(1); opacity: 1; }
 }
 
-.dislike-container {
-    width: 28px;
-    height: 28px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    cursor: pointer;
-    user-select: none;
-    right: 13px;
-    -webkit-tap-highlight-color: transparent; 
-    backface-visibility: hidden;
-    transform: translateZ(0);
-}
-
-.dislike-container .svg-container {
-    pointer-events: none;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.dislike-container input {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    cursor: pointer;
-    z-index: 2;
-    pointer-events: auto;
-}
-
-.dislike-container .dislike-empty,
 .dislike-container .dislike-filled {
-    position: absolute;
-    fill: var(--cbarrita);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    will-change: transform, opacity;
-    max-width: 100%;
-    max-height: 100%;
-}
-
-.dislike-container .dislike-filled {
+    fill: var(--cbarrita, #ffffff) !important;
     opacity: 0;
-    transform: scale(0);
+    transform: scale(0.01);
     z-index: 1;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .dislike-container .dislike-empty {
+    fill: var(--cbarrita, #ffffff) !important;
     opacity: 1;
     transform: scale(1);
     z-index: 1;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 #dislike-checkbox:checked ~ .svg-container .dislike-filled {
@@ -2914,7 +2889,7 @@ ul li.playing {
 }
 
 @keyframes keyframes-fill-dislike {
-    0% { transform: scale(0); opacity: 0; }
+    0% { transform: scale(0.01); opacity: 0; }
     50% { transform: scale(1.1) rotate(-5deg); } 
     100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
@@ -2979,6 +2954,7 @@ ul li.playing {
 }
 
 .no-results-highlight {
+    text-align: center;
     color: var(--corazon);
     margin-bottom: 5px;
 }
@@ -3041,6 +3017,7 @@ ul li.playing {
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     padding-left: 10px; 
 }
+
 
 
 /* import { getFirestore, doc, updateDoc, increment, getDoc } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js';

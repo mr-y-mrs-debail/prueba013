@@ -274,7 +274,6 @@ const dislikeCheckbox = document.getElementById("dislike-checkbox");
 const heartFilled = document.querySelector(".heart-container .svg-filled");
 const thumbSolid = document.querySelector(".dislike-container .dislike-filled");
 
-
 function updateLikeDislikeButtons(liked, disliked) {
     if (likeCheckbox) {
         likeCheckbox.checked = liked;
@@ -306,24 +305,15 @@ function handleDislike() {
 }
 
 document.querySelector(".heart-container")?.addEventListener('click', (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
     e.stopPropagation();
     handleLike();
 });
 
 document.querySelector(".dislike-container")?.addEventListener('click', (e) => {
-    if(e.target.type !== 'checkbox') {
-        const cb = e.currentTarget.querySelector('input[type="checkbox"]');
-        if (cb) cb.click();
-    }
-});
-
-dislikeCheckbox?.addEventListener('change', (e) => {
-    if (e.target.checked) {
-        updateLikeDislikeButtons(false, true);
-    } else {
-        updateLikeDislikeButtons(false, false);
-    }
+    e.preventDefault();
+    e.stopPropagation();
+    handleDislike();
 });
 
 function loadInitialLikesDislikes(likedStatus, dislikedStatus) {
@@ -713,28 +703,10 @@ document.addEventListener('DOMContentLoaded', function() {
         songListDiv.appendChild(fragment);
     }
 
-    albumItems.forEach(item => {
+   albumItems.forEach(item => {
         item.addEventListener('click', function() { 
-            const albumArtist = this.dataset.artist.toLowerCase();
-            let songsToShow = []; 
-
-            if (albumArtist === 'otros') {
-                const explicitArtists = Array.from(albumItems)
-                    .map(i => i.dataset.artist.toLowerCase())
-                    .filter(art => art !== 'otros');
-                
-                songsToShow = allMusic.filter(song => {
-                    const firstArtist = song.artist.split(/ ft | x | & /)[0].toLowerCase().trim();
-                    return !explicitArtists.includes(firstArtist);
-                });
-            } else {
-                songsToShow = allMusic.filter(song => {
-                    const firstArtist = song.artist.split(/ ft | x | & /)[0].toLowerCase().trim();
-                    return firstArtist === albumArtist;
-                });
-            } 
-
-            renderSongList(songsToShow, false); 
+            renderSongList([], true); 
+            
             showSongList(this.dataset.artist, 'artists'); 
         });
     });
