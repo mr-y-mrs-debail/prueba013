@@ -50,54 +50,55 @@
                             </div>
                     <!-- cambio de # -->
 
-                            <nav class="nav-flotante" id="floating-menu-toggle">
-                                <a href="javascript:void(0)" class="boton-principal">
-                                    <svg class="icono-principal" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.7">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
-                                    </svg>
-                                </a>
-                                
-                                <div class="menu-items" id="floating-menu-items">
+                          <nav class="nav-flotante" id="floating-menu-toggle">
+    <a href="javascript:void(0)" class="boton-principal">
+        <svg class="icono-principal" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.7">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
+        </svg>
+    </a>
+    
+    <div class="menu-items" id="floating-menu-items">
+        <!-- Cambiados a etiquetas <a> para mejor respuesta táctil -->
+        <a href="#" class="menu-item item-3" id="open-all-songs"> 
+            <div class="icono-caja">
+                <i class="bi bi-card-list"></i>                                        
+            </div>
+            <p class="etiqueta">Biblioteca</p>
+        </a>
 
-                                     <div class="menu-item item-3" id="open-all-songs"> 
-                                        <div class="icono-caja">
-                                            <i class="bi bi-card-list"></i>                                        
-                                        </div>
-                                        <p class="etiqueta">Biblioteca</p>
-                                    </div>
+        <a href="#" class="menu-item item-1" id="open-albums-menu">
+            <div class="icono-caja">
+                <i class="bi bi-folder" id="folder-icon"></i>
+                <i class="bi bi-folder2-open" id="folder-open-icon"></i> 
+            </div>
+            <p class="etiqueta">Artistas</p>
+        </a>
 
-                                    <div class="menu-item item-1" id="open-albums-menu">
-                                        <div class="icono-caja">
-                                            <i class="bi bi-folder" id="folder-icon"></i>
-                                            <i class="bi bi-folder2-open" id="folder-open-icon"></i> 
-                                        </div>
-                                        <p class="etiqueta">Artistas</p>
-                                    </div>
+        <a href="#" class="menu-item item-2">
+            <div class="icono-caja">
+                <i id="more-music" class="bi bi-music-note-list"></i>
+            </div>
+            <p class="etiqueta">Lista <br> (A-Z)</p>
+        </a>
 
-                                    <div class="menu-item item-2">
-                                        <div class="icono-caja">
-                                            <i id="more-music" class="bi bi-music-note-list"></i>
-                                        </div>
-                                        <p class="etiqueta">Lista <br> (A-Z)</p>
-                                    </div>
-
-                                    <div class="menu-item item-4" id="favorites-trigger">
-                                        <div class="icono-caja">
-                                            <i class="bi bi-suit-heart"></i>
-                                        </div>
-                                        <!-- cambio -->
-                                        <p class="etiqueta">Favoritos</p> 
-                                    </div>                                    
-                                </div>
-                            </nav>   
+        <a href="#" class="menu-item item-4" id="favorites-trigger">
+            <div class="icono-caja">
+                <i class="bi bi-suit-heart"></i>
+            </div>
+            <p class="etiqueta">Favoritos</p> 
+        </a>                                    
+    </div>
+</nav>
                         </div>   
 
                         <div id="suggestions-container-principal" class="suggestions-container"></div>
                         <div class="img-area mt-3" id="download-trigger" style="position: relative; cursor: pointer;">
                             <div class="img-container">
 
-    <img src="" class="img-fluid" alt="imgMV" id="main-album-art">
-
+<img src="" class="img-fluid" alt="imgMV" id="main-album-art" 
+             width="420" height="420" 
+             fetchpriority="high" 
+             loading="eager">
     <div class="download-overlay d-flex align-items-center justify-content-center">
         <div class="download-icon-circle">
             <i class="bi bi-download"></i>
@@ -325,50 +326,33 @@
     <script type="module" src="js/script.js"></script>    
     <script type="module" src="js/search.js"></script>
     
-   <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleMenu = document.getElementById('floating-menu-toggle');
-            const menuItemsContainer = document.getElementById('floating-menu-items');
-            const principalButton = toggleMenu ? toggleMenu.querySelector('.boton-principal') : null;
+ <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleMenu = document.getElementById('floating-menu-toggle');
+        const principalButton = toggleMenu ? toggleMenu.querySelector('.boton-principal') : null;
+        
+        if (toggleMenu && principalButton) {
             
-            if (principalButton && menuItemsContainer && toggleMenu) {
-                
-                principalButton.addEventListener('click', (event) => {
-                    event.preventDefault(); 
-                    toggleMenu.classList.toggle('open');
+            principalButton.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                toggleMenu.classList.toggle('open');
+            });
+
+            const menuItems = toggleMenu.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const itemId = item.id;
+                    console.log(`Presionaste el botón: ${itemId || item.innerText || 'Elemento'}`);
                 });
-                
-                const elementosQueCierran = menuItemsContainer.querySelectorAll('div.menu-item:not(.modo-switch-flotante)');
-                
-                elementosQueCierran.forEach(item => {
-                    item.addEventListener('click', (event) => {
-                        event.stopPropagation(); 
-                        
-                        const clicEnIconoCaja = event.target.closest('.icono-caja');
-                        
-                        if (clicEnIconoCaja) {
-                            console.log('¡Acción del icono activada!');
-                            if (toggleMenu.classList.contains('open')) {
-                                toggleMenu.classList.remove('open');
-                            }
-                        }
-                    });
-                });
-                
-                document.addEventListener('click', (event) => {
-                    if (toggleMenu.classList.contains('open')) {
-                        
-                        const isClickInsideMenu = toggleMenu.contains(event.target);
-                        
-                        if (!isClickInsideMenu) {
-                            toggleMenu.classList.remove('open');
-                            console.log('Menú cerrado por clic exterior.');
-                        }
-                    }
-                });
-            }
-        });
-    </script>
+            });
+                    
+        }
+    });
+</script>
     
 </body>
 </html>

@@ -348,6 +348,18 @@ const moreMusicBtn = document.getElementById("more-music");
 const closeMoreMusic = document.getElementById("close");
 
 let lastActiveAlphabetA = null;
+let alphabetCountCache = null;
+
+function precomputeAlphabetCounts() {
+    alphabetCountCache = {};
+    alphabet.forEach(letter => {
+        if (letter === "#") {
+            alphabetCountCache[letter] = allMusic.filter(song => /^[^a-zA-Z]/.test(song.name)).length;
+        } else {
+            alphabetCountCache[letter] = allMusic.filter(song => removeAccents(song.name).toUpperCase().startsWith(letter)).length;
+        }
+    });
+}
 
 function updatePlayingSong() {
     const currentSong = allMusic[musicIndex];
@@ -411,11 +423,11 @@ function loadAlphabet() {
     if (!alphabetElement) return;
     alphabetElement.innerHTML = '';
     
-    const observerOptions = {
-        root: alphabetElement,
-        threshold: 0.1
-    };
-
+    if (!alphabetCountCache) {
+        precomputeAlphabetCounts();
+    }
+    
+    const observerOptions = { root: alphabetElement, threshold: 0.1 };
     const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -425,10 +437,10 @@ function loadAlphabet() {
         });
     }, observerOptions);
 
+    const fragment = document.createDocumentFragment();
+
     alphabet.forEach(letter => {
-        const songCount = (letter === "#")
-            ? allMusic.filter(song => /^[^a-zA-Z]/.test(song.name)).length
-            : allMusic.filter(song => removeAccents(song.name).toUpperCase().startsWith(letter)).length;
+        const songCount = alphabetCountCache[letter] || 0;
 
         const liTag = document.createElement('li');
         liTag.classList.add('alphabet-item');
@@ -436,7 +448,6 @@ function loadAlphabet() {
         
         const aTag = document.createElement('a');
         aTag.href = "#";
-        
         aTag.innerHTML = `
             <span class="letter">${letter}</span>
             <span class="count">${songCount}</span>
@@ -445,7 +456,7 @@ function loadAlphabet() {
         if (songCount > 0) {
             aTag.addEventListener('click', (e) => {
                 e.preventDefault();
-                loadSongsByLetter(letter);
+                setTimeout(() => loadSongsByLetter(letter), 0);
             });
         } else {
             liTag.classList.add('empty');
@@ -453,9 +464,11 @@ function loadAlphabet() {
         }
         
         liTag.appendChild(aTag);
-        alphabetElement.appendChild(liTag);
+        fragment.appendChild(liTag);
         observer.observe(liTag);
     });
+
+    alphabetElement.appendChild(fragment);
 }
 
 function loadSongsByLetter(letter) {
@@ -486,7 +499,6 @@ function loadSongsByLetter(letter) {
             liTag.classList.add('song-item');
             liTag.setAttribute('li-index', songIndexInAll + 1);
 
-            // HTML
             liTag.innerHTML = `
                 <div class="row align-items-center">
                     <div class="col-8">
@@ -508,7 +520,6 @@ function loadSongsByLetter(letter) {
                 }
             });
 
-            // LIKE / DISLIKE
             const likeBtn = liTag.querySelector('.btn-like');
             const dislikeBtn = liTag.querySelector('.btn-dislike');
 
@@ -580,7 +591,6 @@ function selectSong(element) {
     }
 }
 
-// Event Listeners
 if (moreMusicBtn) moreMusicBtn.addEventListener("click", showAlphabetView);
 if (closeMoreMusic) closeMoreMusic.addEventListener("click", closeMusicList);
 
@@ -631,6 +641,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const favoritesContainer = document.getElementById('favorites-container');
     const closeFavoritesList = document.getElementById('close-favorites-list');
     const favoritesAlbumItems = document.querySelectorAll('#favorites-list-items .album-item1'); 
+    const toggleMenu = document.getElementById('floating-menu-toggle');
 
     let previousView = null; 
 
@@ -644,17 +655,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showFavoritesList() {
-    blurOverlay.style.display = 'flex';
-    favoritesContainer.style.display = 'flex'; 
-    albumContainer.style.display = 'none'; 
+        blurOverlay.style.display = 'flex';
+        favoritesContainer.style.display = 'flex'; 
+        albumContainer.style.display = 'none'; 
+    }
 
-}
-
-  function showAlbumList() {
-    blurOverlay.style.display = 'flex';
-    albumContainer.style.display = 'flex';
-    favoritesContainer.style.display = 'none'; 
-}
+    function showAlbumList() {
+        blurOverlay.style.display = 'flex';
+        albumContainer.style.display = 'flex';
+        favoritesContainer.style.display = 'none'; 
+    }
 
     function showSongList(title, callerType) {
         artistNameDisplay.textContent = title;
@@ -737,7 +747,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    if (favoritesTrigger) favoritesTrigger.addEventListener('click', showFavoritesList);
+    const openAlbumsBtn = document.getElementById('open-albums-menu');
+if (openAlbumsBtn) {
+    openAlbumsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setTimeout(showAlbumList, 0);
+    });
+}
+
+if (favoritesTrigger) {
+    favoritesTrigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setTimeout(showFavoritesList, 0);
+    });
+}
     if (closeFavoritesList) closeFavoritesList.addEventListener('click', closeAllViews); 
     folderIcon.addEventListener('click', showAlbumList);
     if (closeAlbumList) closeAlbumList.addEventListener('click', closeAllViews);
@@ -749,6 +774,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     blurOverlay.addEventListener('click', (e) => {
+        if (toggleMenu && toggleMenu.classList.contains('open')) {
+            return;
+        }
         if (e.target === blurOverlay) {
             if (songListContainer.style.display === 'flex') closeSongListAction();
             else closeAllViews();
@@ -756,9 +784,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+window.getTopTenFavoriteSongs = function() {
+    console.warn("(Arreglo por el momento).");
+    return [];
+};
+
 // Canciones en lista y orden__________________________________________________________________________________________________________
 
-//const openAllSongsBtn = document.querySelector('#open-all-songs');
+const openAllSongsBtn = document.querySelector('#open-all-songs');
 const allSongsContainer = document.getElementById('all-songs-container');
 const closeAllSongsList = document.getElementById('close-all-songs-list');
 const allSongsListItems = document.getElementById('all-songs-list-items');
