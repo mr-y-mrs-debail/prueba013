@@ -72,16 +72,13 @@ input[type="search"] {
 
 .wrapper {
     width: 100vw;
-    /* Cambiado a min-height auto para que no fuerce tamaño extra si no se necesita */
-    min-height: 100vh; 
+    height: 100dvh; 
     max-width: 100% !important;
     margin: 0 !important;
-    /* Reducido el padding inferior drásticamente de 85px a 15px */
     padding: calc(env(safe-area-inset-top) + 10px) 20px calc(env(safe-area-inset-bottom) + 15px) 20px;
     display: flex;
     flex-direction: column;
-    /* Cambiado de space-between a flex-start para controlar el espaciado manualmente con márgenes */
-    justify-content: flex-start; 
+    justify-content: space-between; 
     position: relative;
     z-index: 1;
     background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%);
@@ -121,9 +118,8 @@ input[type="search"] {
 
 @media (max-width: 768px) {    
     .wrapper {
-        min-height: 100vh;
-        height: auto; 
-        /* Corregido el padding aquí también de 85px a 15px */
+        /* Aseguramos que en móviles mantenga el 100% de la altura dinámica */
+        height: 100dvh;
         padding: 20px 20px calc(env(safe-area-inset-bottom) + 15px) 20px;
         width: 100%;
         max-width: 100%;
@@ -420,7 +416,7 @@ input[type="search"] {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    transform: translate(-45%, 0) scale(1);
+    transform: translate(-50%, 0) scale(1);
 }
 
 #search-input-principal {
@@ -957,7 +953,7 @@ transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 @media (min-width: 992px) {
     
     .img-area {
-        max-width: 200px;
+        max-width: 250px;
     }
     .device-display { 
     max-width: 190px;     
