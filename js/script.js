@@ -326,7 +326,33 @@ function removeAccents(str) {
 }
 
 
+//Nav
 
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleMenu = document.getElementById('floating-menu-toggle');
+    
+    if (toggleMenu) {
+        const menuItems = toggleMenu.querySelectorAll('.menu-item');
+        
+        menuItems.forEach(item => {
+            item.addEventListener('click', (event) => {
+                event.stopPropagation();
+
+                const itemId = item.id;
+                console.log(`Presionaste el botón: ${itemId || item.innerText || 'Elemento'}`);
+                
+                if (itemId === 'open-alphabet-menu') {
+                    event.preventDefault();
+                    showAlphabetView();
+                }
+                
+            });
+        });
+    }
+});
+
+
+// partes del nav
 
 
 const alphabet = ["#", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")];
@@ -334,7 +360,6 @@ const backToAlphabetBtn = document.getElementById('back-to-alphabet');
 const alphabetListDiv = document.querySelector(".alphabet-list");
 const songListUl = document.getElementById("playlist"); 
 const musicListDiv = document.querySelector(".music-list");
-const moreMusicBtn = document.getElementById("more-music");
 const closeMoreMusic = document.getElementById("close");
 
 let lastActiveAlphabetA = null;
@@ -581,7 +606,6 @@ function selectSong(element) {
     }
 }
 
-if (moreMusicBtn) moreMusicBtn.addEventListener("click", showAlphabetView);
 if (closeMoreMusic) closeMoreMusic.addEventListener("click", closeMusicList);
 
 if (backToAlphabetBtn) {
@@ -627,21 +651,51 @@ document.addEventListener('DOMContentLoaded', function() {
     const artistNameDisplay = document.getElementById('artist-name');
     const songListDiv = document.getElementById('song-list');
     const closeSongList = document.getElementById('close-song-list');
-    const favoritesTrigger = document.querySelector('.menu-item.item-4'); 
     const favoritesContainer = document.getElementById('favorites-container');
     const closeFavoritesList = document.getElementById('close-favorites-list');
     const favoritesAlbumItems = document.querySelectorAll('#favorites-list-items .album-item1'); 
+    
     const toggleMenu = document.getElementById('floating-menu-toggle');
 
     let previousView = null; 
+
+    if (toggleMenu) {
+        const menuItems = toggleMenu.querySelectorAll('.menu-item');
+        
+        menuItems.forEach(item => {
+            item.addEventListener('click', (event) => {
+                event.stopPropagation();
+
+                const itemId = item.id;
+                console.log(`Presionaste el botón: ${itemId || item.innerText || 'Elemento'}`);
+                
+                if (item.classList.contains('deshabilitado') || item.getAttribute('aria-disabled') === 'true') {
+                    event.preventDefault();
+                    return;
+                }
+
+                if (itemId === 'open-albums-menu') {
+                    event.preventDefault();
+                    if (typeof closeMusicList === "function") closeMusicList(); 
+                    setTimeout(showAlbumList, 0);
+                }
+                
+                if (itemId === 'favorites-trigger') {
+                    event.preventDefault();
+                    if (typeof closeMusicList === "function") closeMusicList();
+                    setTimeout(showFavoritesList, 0);
+                }
+            });
+        });
+    }
 
     function closeAllViews() {
         blurOverlay.style.display = 'none';
         albumContainer.style.display = 'none'; 
         favoritesContainer.style.display = 'none';
         songListContainer.style.display = 'none';
-        folderIcon.style.display = 'inline-block';
-        folderOpenIcon.style.display = 'none';
+        if (folderIcon) folderIcon.style.display = 'inline-block';
+        if (folderOpenIcon) folderOpenIcon.style.display = 'none';
     }
 
     function showFavoritesList() {
@@ -654,6 +708,8 @@ document.addEventListener('DOMContentLoaded', function() {
         blurOverlay.style.display = 'flex';
         albumContainer.style.display = 'flex';
         favoritesContainer.style.display = 'none'; 
+        if (folderIcon) folderIcon.style.display = 'none';
+        if (folderOpenIcon) folderOpenIcon.style.display = 'inline-block';
     }
 
     function showSongList(title, callerType) {
@@ -683,6 +739,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         songs.forEach((song) => {
             const songIndexInAll = allMusic.findIndex(s => s.src === song.src);
+            if (songIndexInAll === -1) return; // Validación por seguridad
+
             const songItem = document.createElement('div');
             songItem.classList.add('song-item');
             songItem.setAttribute('data-index', songIndexInAll); 
@@ -703,10 +761,9 @@ document.addEventListener('DOMContentLoaded', function() {
         songListDiv.appendChild(fragment);
     }
 
-   albumItems.forEach(item => {
+    albumItems.forEach(item => {
         item.addEventListener('click', function() { 
             renderSongList([], true); 
-            
             showSongList(this.dataset.artist, 'artists'); 
         });
     });
@@ -719,24 +776,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    const openAlbumsBtn = document.getElementById('open-albums-menu');
-if (openAlbumsBtn) {
-    openAlbumsBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setTimeout(showAlbumList, 0);
-    });
-}
-
-if (favoritesTrigger) {
-    favoritesTrigger.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setTimeout(showFavoritesList, 0);
-    });
-}
     if (closeFavoritesList) closeFavoritesList.addEventListener('click', closeAllViews); 
-    folderIcon.addEventListener('click', showAlbumList);
+    if (folderIcon) folderIcon.addEventListener('click', showAlbumList);
     if (closeAlbumList) closeAlbumList.addEventListener('click', closeAllViews);
     if (closeSongList) closeSongList.addEventListener('click', closeSongListAction); 
 
@@ -745,6 +786,7 @@ if (favoritesTrigger) {
         else showAlbumList();
     }
 
+    // funcion innecesaria
     blurOverlay.addEventListener('click', (e) => {
         if (toggleMenu && toggleMenu.classList.contains('open')) {
             return;
@@ -760,7 +802,6 @@ window.getTopTenFavoriteSongs = function() {
     console.warn("(Arreglo por el momento).");
     return [];
 };
-
 // Canciones en lista y orden__________________________________________________________________________________________________________
 
 const openAllSongsBtn = document.querySelector('#open-all-songs');
