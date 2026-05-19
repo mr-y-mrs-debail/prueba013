@@ -49,49 +49,44 @@
                                  <a href="#" id="search-option"><span class="lupa search-option material-icons">search</span></a>
                             </div>
                     <!-- cambio de # -->
+                     <nav class="nav-flotante" id="floating-menu-toggle" aria-label="Navegación principal">
+                    <div class="menu-items d-flex flex-row align-items-center gap-3" id="floating-menu-items">
+                        
+                        <a class="menu-item item-3 text-center text-decoration-none deshabilitado" id="open-all-songs" aria-disabled="true" tabindex="-1">
+                            <div class="icono-caja">
+                                <i class="bi bi-card-list"></i>                                                                             
+                            </div>
+                            <p class="etiqueta">Biblioteca</p>
+                        </a>
+
+                        <a href="#" class="menu-item item-1 text-center text-decoration-none" id="open-albums-menu">
+                            <div class="icono-caja">
+                                <i class="bi bi-folder" id="folder-icon"></i>
+                                <i class="bi bi-folder2-open d-none" id="folder-open-icon"></i> 
+                            </div>
+                            <p class="etiqueta">Artistas</p>
+                        </a>
+
+                        <a href="#" class="menu-item item-2 text-center text-decoration-none" id="open-alphabet-menu">
+                            <div class="icono-caja">
+                                <i id="more-music" class="bi bi-music-note-list"></i>
+                            </div>
+                            <p class="etiqueta">Lista (A-Z)</p>
+                        </a>
+
+                        <a href="#" class="menu-item item-4 text-center text-decoration-none" id="favorites-trigger">
+                            <div class="icono-caja">
+                                <i class="bi bi-suit-heart"></i>
+                            </div>
+                            <p class="etiqueta">Favoritos</p> 
+                        </a>                                                 
+                    </div>
+                </nav>
 
                         </div>   
 
                         <div id="suggestions-container-principal" class="suggestions-container"></div>
                         <div class="img-area mt-3" id="download-trigger" style="position: relative; cursor: pointer;">
-                            <nav class="nav-flotante py-2" id="floating-menu-toggle" aria-label="Navegación principal">
-    
- 
-<div class="menu-items d-flex flex-column justify-content-between h-100" id="floating-menu-items">
-
-       <a class="menu-item item-3 text-center text-decoration-none deshabilitado" 
-   id="open-all-songs" 
-   aria-disabled="true" 
-   tabindex="-1">
-    <div class="icono-caja">
-        <i class="bi bi-card-list"></i>                                                            
-    </div>
-    <p class="etiqueta">Biblioteca</p>
-</a>
-
-        <a href="#" class="menu-item item-1 text-center text-decoration-none" id="open-albums-menu">
-            <div class="icono-caja">
-                <i class="bi bi-folder" id="folder-icon"></i>
-                <i class="bi bi-folder2-open d-none" id="folder-open-icon"></i> 
-            </div>
-            <p class="etiqueta">Artistas</p>
-        </a>
-
-        <a href="#" class="menu-item item-2 text-center text-decoration-none" id="open-alphabet-menu">
-            <div class="icono-caja">
-                <i id="more-music" class="bi bi-music-note-list"></i>
-            </div>
-            <p class="etiqueta">Lista <br> (A-Z)</p>
-        </a>
-
-        <a href="#" class="menu-item item-4 text-center text-decoration-none" id="favorites-trigger">
-            <div class="icono-caja">
-                <i class="bi bi-suit-heart"></i>
-            </div>
-            <p class="etiqueta">Favoritos</p> 
-        </a>                                        
-    </div>
-</nav>
                             <div class="img-container">
 
 <img src="" class="img-fluid" alt="imgMV" id="main-album-art" 
@@ -166,42 +161,6 @@
                             </div>
                             <i id="next" class="bi bi-skip-end-fill"></i>
                         </div>
-
-                         <!-- <nav class="nav-flotante py-2" id="floating-menu-toggle" aria-label="Navegación principal">
-    
- 
-    <div class="menu-items d-flex justify-content-around align-items-center w-100" id="floating-menu-items">
-        
-        <a href="#" class="menu-item item-3 text-center text-decoration-none" id="open-all-songs" style="pointer-events: none; cursor: not-allowed;" aria-disabled="true" tabindex="-1">
-            <div class="icono-caja">
-                <i class="bi bi-card-list"></i>                                            
-            </div>
-            <p class="etiqueta">Biblioteca</p>
-        </a>
-
-        <a href="#" class="menu-item item-1 text-center text-decoration-none" id="open-albums-menu">
-            <div class="icono-caja">
-                <i class="bi bi-folder" id="folder-icon"></i>
-                <i class="bi bi-folder2-open d-none" id="folder-open-icon"></i> 
-            </div>
-            <p class="etiqueta">Artistas</p>
-        </a>
-
-        <a href="#" class="menu-item item-2 text-center text-decoration-none">
-            <div class="icono-caja">
-                <i id="more-music" class="bi bi-music-note-list"></i>
-            </div>
-            <p class="etiqueta">Lista (A-Z)</p>
-        </a>
-
-        <a href="#" class="menu-item item-4 text-center text-decoration-none" id="favorites-trigger">
-            <div class="icono-caja">
-                <i class="bi bi-suit-heart"></i>
-            </div>
-            <p class="etiqueta">Favoritos</p> 
-        </a>                                        
-    </div>
-</nav> -->
                         
                         <div class="music-list mt-3">
                             <div class="header d-flex justify-content-between align-items-center">
