@@ -1170,7 +1170,7 @@ function renderSongsList(songsToDisplay, targetContainer) {
         
         messageDiv.innerHTML = `
         <h3 class="list-empty-highlight">¡Oh! ¡Oh!</h3>
-        <p> Esta función no esta disponible mi amor, pero te envío besitos para TODO TÚ!</p>`;
+        <p> Esta función no esta disponible mi amor, pero te envío besitos para TODO TÚ! y por leer esto me debes un besito y que me cantes!!!!! Quise decir, muchos besitos♡</p>`;
         
         targetContainer.appendChild(messageDiv);
         return;
