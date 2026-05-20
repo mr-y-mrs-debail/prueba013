@@ -86,7 +86,7 @@ export function searchPrincipal(searchInput) {
             suggestionItem.innerHTML = `
                 <div class="suggestion-info">
                     <strong>${song.name}</strong>
-                    <span>${song.artist}</span>
+                    <span class="suggestion-artist">${song.artist}</span>
                 </div>
             `;
             

@@ -29,63 +29,70 @@
 </head>
 
 <body>
-       <div id="player-wrapper">
+    
+    <div id="player-wrapper">
         <div class="container-fluid p-0">
             <div id="default-view" class="wrapper">
-                
-                <div class="top-bar d-flex position-relative align-items-center ">
-                            
-                        <div id="search-container-principal" class="search-container-principal">
-                            <div class="input-relative-wrapper" style="position: relative; flex: 1; display: flex; align-items: center;">
-                                <input type="text" id="search-input-principal" placeholder="Buscar..." autocomplete="off">
-        
-                                <i class="material-icons" id="clear-search-input">close</i>
-                            </div>
-                            
-                            <i class="material-icons" id="close-search">arrow_back</i>
-                        </div>
-                            
-                            <div class="dropdown">
-                                 <a href="#" id="search-option"><span class="lupa search-option material-icons">search</span></a>
-                            </div>
-                    <!-- cambio de # -->
-                     <nav class="nav-flotante" id="floating-menu-toggle" aria-label="Navegación principal">
-                    <div class="menu-items d-flex flex-row align-items-center gap-3" id="floating-menu-items">
+                <div class="top-bar-reproductor">
+
+                    <div class="top-bar d-flex position-relative align-items-center ">
                         
-                        <a class="menu-item item-3 text-center text-decoration-none deshabilitado" id="open-all-songs" aria-disabled="true" tabindex="-1">
-                            <div class="icono-caja">
-                                <i class="bi bi-card-list"></i>                                                                             
+                        <div class="search-and-results-wrapper" style="position: relative; flex: 1; order: 2;">
+                            <div id="search-container-principal" class="search-container-principal">
+                                <div class="input-relative-wrapper" style="position: relative; flex: 1; display: flex; align-items: center;">
+                                    <input type="text" id="search-input-principal" placeholder="Buscar..." autocomplete="off">
+                                    <i class="material-icons" id="clear-search-input">close</i>
+                                </div>
+                                <i class="material-icons" id="close-search">arrow_back</i>
                             </div>
-                            <p class="etiqueta">Biblioteca</p>
-                        </a>
-
-                        <a href="#" class="menu-item item-1 text-center text-decoration-none" id="open-albums-menu">
-                            <div class="icono-caja">
-                                <i class="bi bi-folder" id="folder-icon"></i>
-                                <i class="bi bi-folder2-open d-none" id="folder-open-icon"></i> 
-                            </div>
-                            <p class="etiqueta">Artistas</p>
-                        </a>
-
-                        <a href="#" class="menu-item item-2 text-center text-decoration-none" id="open-alphabet-menu">
-                            <div class="icono-caja">
-                                <i id="more-music" class="bi bi-music-note-list"></i>
-                            </div>
-                            <p class="etiqueta">Lista (A-Z)</p>
-                        </a>
-
-                        <a href="#" class="menu-item item-4 text-center text-decoration-none" id="favorites-trigger">
-                            <div class="icono-caja">
-                                <i class="bi bi-suit-heart"></i>
-                            </div>
-                            <p class="etiqueta">Favoritos</p> 
-                        </a>                                                 
-                    </div>
-                </nav>
-
-                        </div>   
-
+                        </div>
                         <div id="suggestions-container-principal" class="suggestions-container"></div>
+                        
+                        <nav class="nav-flotante" id="floating-menu-toggle" aria-label="Navegación principal">
+                            
+                            <div class="menu-items" id="floating-menu-items">
+                                <a class="menu-item item-3 text-center text-decoration-none deshabilitado" id="open-all-songs" aria-disabled="true" tabindex="-1">
+                                    <div class="icono-caja">
+                                        <i class="bi bi-card-list"></i>                                                                             
+                                    </div>
+                                    <p class="etiqueta">Biblioteca</p>
+                                </a>
+
+                 <a href="#" class="menu-item item-5 text-center text-decoration-none" id="search-option">
+    <div class="icono-caja">
+        <span class="material-icons">search</span>
+    </div>
+    <p class="etiqueta">Buscar</p>
+</a>
+
+                <a href="#" class="menu-item item-1 text-center text-decoration-none" id="open-albums-menu">
+                    <div class="icono-caja">
+                        <i class="bi bi-folder" id="folder-icon"></i>
+                        <i class="bi bi-folder2-open d-none" id="folder-open-icon"></i> 
+                    </div>
+                    <p class="etiqueta">Artistas</p>
+                </a>
+
+                <a href="#" class="menu-item item-2 text-center text-decoration-none" id="open-alphabet-menu">
+                    <div class="icono-caja">
+                        <i id="more-music" class="bi bi-music-note-list"></i>
+                    </div>
+                    <p class="etiqueta">Lista (A-Z)</p>
+                </a>
+
+                <a href="#" class="menu-item item-4 text-center text-decoration-none" id="favorites-trigger">
+                    <div class="icono-caja">
+                        <i class="bi bi-suit-heart"></i>
+                    </div>
+                    <p class="etiqueta">Favoritos</p> 
+                </a>   
+                
+            </div>
+        </nav>
+
+    </div>   
+</div>
+
                         <div class="img-area mt-3" id="download-trigger" style="position: relative; cursor: pointer;">
                             <div class="img-container">
 
