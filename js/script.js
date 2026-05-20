@@ -837,23 +837,17 @@ window.currentSort = 'name';
 window.currentListType = 'all';
 
 window.syncAllMusicPlays = async function() {
-    if (!window.allMusic || !db) return;
+    if (!window.allMusic) return;
 
     try {
-        const querySnapshot = await getDocs(collection(db, 'song_plays'));        
-        const playDataMap = {};
-            
-        querySnapshot.forEach((doc) => {
-            playDataMap[doc.id] = doc.data().plays || 0;
-        });
-
         window.allMusic = window.allMusic.map(song => {
-            const plays = playDataMap[song.src] || 0;
+            const plays = song.plays || 0; 
             return { ...song, plays: plays };
         });
         
+        console.log("Sincronización local completada (Modo Diseño Activo)");
     } catch (e) {
-        console.error("ERROR: Fallo al sincronizar plays con allMusic:", e);
+        console.error("ERROR: Fallo al sincronizar plays localmente:", e);
     }
 };
 
@@ -926,8 +920,8 @@ function showAllSongsList(isFromHistory = false) {
         setTimeout(() => {
             allSongsContainer.classList.add('visible'); 
             if (window.mainAudio) {
-        updatePlayPauseIcons(!window.mainAudio.paused);
-    } 
+                updatePlayPauseIcons(!window.mainAudio.paused);
+            } 
         }, 10);
     }
     
@@ -1106,8 +1100,8 @@ window.scrollToSongItem = scrollToSongItem;
 
 function updateMiniPlayerProgress() {
     const miniDisc = document.querySelector('.mini-disc-wrapper');
-    const currentTime = window.mainAudio.currentTime;
-    const duration = window.mainAudio.duration;
+    const currentTime = window.mainAudio ? window.mainAudio.currentTime : 0;
+    const duration = window.mainAudio ? window.mainAudio.duration : 0;
     if (miniDisc && duration > 0 && isFinite(duration)) {
         const progressDegrees = (currentTime / duration) * 360;        
         miniDisc.style.setProperty('--progress', `${progressDegrees}deg`);
@@ -1134,9 +1128,8 @@ function updateAllSongsListHighlight() {
 }
 window.updateAllSongsListHighlight = updateAllSongsListHighlight;
 
-
 async function loadRecentSongs() { 
-    const songsToRender = await window.loadRecentSongsHistory(RECENT_SONGS_LIMIT); 
+    const songsToRender = []; 
 
     if (recentSongsListItems) {
         recentSongsListItems.innerHTML = '<p class="text-center p-4">Cargando canciones recientes...</p>'; 
@@ -1263,7 +1256,6 @@ function renderSongsList(songsToDisplay, targetContainer) {
 }
 
 function switchSongsList(listType) {
-
     window.currentListType = listType;
 
     songsListSubtitle.forEach(subtitle => {
@@ -1296,7 +1288,6 @@ function switchSongsList(listType) {
         if (typeof sortAndLoadAllSongs === 'function') {
              sortAndLoadAllSongs(window.currentSort); 
         }
-
     } else if (listType === 'recent') {
         if (typeof loadRecentSongs === 'function') {
             loadRecentSongs(); 
@@ -1306,8 +1297,8 @@ function switchSongsList(listType) {
     if (songsSearchInput) songsSearchInput.value = '';
     filterSongsList(''); 
     setTimeout(() => {
-    applyLazyLoading();
-}, 50);
+        if (typeof applyLazyLoading === 'function') applyLazyLoading();
+    }, 50);
 }
 
 async function loadFavoriteCards() {
@@ -1315,7 +1306,7 @@ async function loadFavoriteCards() {
     if (!favCarousel) return;    
     favCarousel.innerHTML = ''; 
 
-    const topTenSongs = await getTopTenFavoriteSongs();     
+    const topTenSongs = [];     
     let noPlaysMessage = document.getElementById('no-favorites-message');
     
     if (topTenSongs.length === 0) {
@@ -1325,9 +1316,9 @@ async function loadFavoriteCards() {
             messageDiv.classList.add('no-favorites-message');
             
             messageDiv.innerHTML = `
-                <p class="no-results-highlight">¡Ups!</p>
-                <p>Aún no tienes canciones favoritas</p>
-            `;
+    <p class="no-results-highlight">¡Ups!</p>
+    <p class="no-results-subtext">Aún no tienes canciones favoritas</p>
+`;
             favCarousel.appendChild(messageDiv);
             noPlaysMessage = messageDiv;
         } else {
@@ -1375,7 +1366,9 @@ async function loadFavoriteCards() {
         }
     });
     
-    setTimeout(updateCenteredCard, 10);
+    if (typeof updateCenteredCard === 'function') {
+        setTimeout(updateCenteredCard, 10);
+    }
 }
 window.loadFavoriteCards = loadFavoriteCards;
 
@@ -1384,7 +1377,6 @@ function updateCenteredCard() {
     if (!favCarousel) return;
 
     const carouselCenter = favCarousel.scrollLeft + favCarousel.offsetWidth / 2;
-
     let closestCard = null;
     let minDistance = Infinity;
 
@@ -1392,7 +1384,6 @@ function updateCenteredCard() {
         card.classList.remove('centered-card');
 
         const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-        
         const distance = Math.abs(cardCenter - carouselCenter);
 
         if (distance < minDistance) {
@@ -1406,14 +1397,17 @@ function updateCenteredCard() {
     }
 }
 
+
 function sortAndLoadAllSongs(sortType) {
     if (!window.allMusic || window.allMusic.length === 0) { 
-        renderSongsList([], allSongsListItems); 
+        if (typeof renderSongsList === 'function') {
+            renderSongsList([], allSongsListItems); 
+        }
         return;
     }
     
     let sortedSongs = [...window.allMusic];
-    window.currentSort = sortType || window.currentSort; 
+    window.currentSort = sortType || window.currentSort || 'name'; 
     
     if (window.currentSort === 'name') {
         sortedSongs.sort((a, b) => {
@@ -1421,10 +1415,8 @@ function sortAndLoadAllSongs(sortType) {
             const nameB = typeof window.removeAccents === 'function' ? window.removeAccents(b.name).toUpperCase() : b.name.toUpperCase();
             return nameA.localeCompare(nameB);
         });
-        
     } else if (window.currentSort === 'date') {
         sortedSongs.reverse();
-        
     } else if (window.currentSort === 'plays') {
         sortedSongs.sort((a, b) => {
             const playsA = parseInt(a.plays, 10) || 0;
@@ -1433,7 +1425,7 @@ function sortAndLoadAllSongs(sortType) {
         });
     } 
     
-    if (allSongsListItems) {
+    if (allSongsListItems && typeof renderSongsList === 'function') {
         renderSongsList(sortedSongs, allSongsListItems);
     }
 }
@@ -1446,13 +1438,13 @@ function handleSortSelection(newSort) {
             window.syncAllMusicPlays().then(() => {
                 sortAndLoadAllSongs(); 
                 updateSortMenuVisuals(); 
-            });
+            }).catch(err => console.error("Error sincronizando reproducciones:", err));
         } else {
             sortAndLoadAllSongs(); 
             updateSortMenuVisuals(); 
         }
         
-        if (allSongsContainer.classList.contains('visible') && typeof loadFavoriteCards === 'function') {
+        if (allSongsContainer && allSongsContainer.classList.contains('visible') && typeof loadFavoriteCards === 'function') {
             loadFavoriteCards();
         }
     }
@@ -1476,8 +1468,12 @@ function showSortMenu() {
     }
     
     updateSortMenuVisuals();
-        
-    const sortMenuHTML = document.getElementById('sort-menu').innerHTML;
+    
+    const sortMenuTemplate = document.getElementById('sort-menu');
+    if (!sortMenuTemplate) return;
+
+    const sortMenuHTML = sortMenuTemplate.innerHTML;
+    
     Swal.fire({
         title: 'Ordenar canciones', 
         html: sortMenuHTML,
@@ -1507,56 +1503,69 @@ function showSortMenu() {
 
 window.addEventListener('popstate', (event) => {
     if (!event.state || event.state.view === 'defaultPlayer') {
-        hideAllSongsList(true); 
+        if (typeof hideAllSongsList === 'function') hideAllSongsList(true); 
     } else if (event.state.view === 'allSongsList') {
-        showAllSongsList(true);
+        if (typeof showAllSongsList === 'function') showAllSongsList(true);
     }
 });
 
 window.addEventListener('allMusicLoaded', () => sortAndLoadAllSongs(window.currentSort));
 
 window.addEventListener('songChanged', () => {
-    updatePlayerUI(window.allMusic[window.musicIndex]);
-    updateAllSongsListHighlight();
-});
-
-allSongsContainer.addEventListener('scroll', () => {
-    const scrollTop = allSongsContainer.scrollTop;
-    const fadeRange = 200;
-    let opacity = 1 - (scrollTop / fadeRange);
-
-    if (opacity < 0) opacity = 0;
-    if (opacity > 1) opacity = 1;
-
-    if (typeof favCarousel !== 'undefined' && favCarousel) {
-        favCarousel.style.opacity = opacity;
-        const scale = 0.95 + (opacity * 0.05); 
-        favCarousel.style.transform = `scale(${scale})`;
-        if (opacity === 0) {
-            favCarousel.classList.add('is-hidden');
-        } else {
-            favCarousel.classList.remove('is-hidden');
-        }
+    if (window.allMusic && window.musicIndex !== undefined && typeof updatePlayerUI === 'function') {
+        updatePlayerUI(window.allMusic[window.musicIndex]);
+    }
+    if (typeof updateAllSongsListHighlight === 'function') {
+        updateAllSongsListHighlight();
     }
 });
 
+if (allSongsContainer) {
+    allSongsContainer.addEventListener('scroll', () => {
+        const scrollTop = allSongsContainer.scrollTop;
+        const fadeRange = 200;
+        let opacity = 1 - (scrollTop / fadeRange);
+
+        if (opacity < 0) opacity = 0;
+        if (opacity > 1) opacity = 1;
+
+        const favCarousel = document.getElementById('fav-carousel');
+        if (favCarousel) {
+            favCarousel.style.opacity = opacity;
+            const scale = 0.95 + (opacity * 0.05); 
+            favCarousel.style.transform = `scale(${scale})`;
+            if (opacity === 0) {
+                favCarousel.classList.add('is-hidden');
+            } else {
+                favCarousel.classList.remove('is-hidden');
+            }
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    loadFavoriteCards(); 
+    if (typeof loadFavoriteCards === 'function') loadFavoriteCards(); 
+    
     const favCarouselElement = document.getElementById('fav-carousel');
     if (favCarouselElement) {
         favCarouselElement.addEventListener('scroll', updateCenteredCard);
-        setTimeout(updateCenteredCard, 100); 
+        setTimeout(updateCenteredCard, 150); 
     }
 
-    if (typeof window.mainAudio !== 'undefined') { 
-        window.mainAudio.addEventListener("play", () => updatePlayPauseIcons(true));
+    if (typeof window.mainAudio !== 'undefined' && window.mainAudio) { 
+        window.mainAudio.addEventListener("play", () => {
+            if (typeof updatePlayPauseIcons === 'function') updatePlayPauseIcons(true);
+        });
+        
         window.mainAudio.addEventListener("pause", () => {
-            updatePlayPauseIcons(false);
+            if (typeof updatePlayPauseIcons === 'function') updatePlayPauseIcons(false);
             if (window.playTimer) clearTimeout(window.playTimer);
         });
         
         window.mainAudio.addEventListener("playing", () => {
             if (window.playCountIncremented) return;
+            if (!window.allMusic || window.musicIndex === undefined) return;
+            
             const songToCount = window.allMusic[window.musicIndex];
             if (!songToCount) return;
 
@@ -1577,6 +1586,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.mainAudio.addEventListener("timeupdate", (e) => {
             const currentTime = e.target.currentTime;
             const duration = e.target.duration;
+            
             if (typeof window.progressBar !== 'undefined' && window.progressBar && duration > 0) {
                 let progressWidth = (currentTime / duration) * 100;
                 window.progressBar.style.width = `${progressWidth}%`;
@@ -1584,49 +1594,61 @@ document.addEventListener('DOMContentLoaded', function() {
             if (typeof window.updateCurrentTime === 'function') {
                 window.updateCurrentTime(currentTime);
             }
-            updateMiniPlayerProgress(); 
+            if (typeof updateMiniPlayerProgress === 'function') {
+                updateMiniPlayerProgress(); 
+            }
         });
 
         window.mainAudio.addEventListener("loadeddata", () => {
             const duration = window.mainAudio.duration;
             const wrapper = document.querySelector(".wrapper"); 
             const totalElem = wrapper ? wrapper.querySelector(".max-duration") : null;            
-            if (totalElem) {
+            if (totalElem && duration) {
                 let totalMinutes = Math.floor(duration / 60);
                 let totalSeconds = Math.floor(duration % 60);
                 totalElem.innerText = `${totalMinutes}:${totalSeconds < 10 ? '0' + totalSeconds : totalSeconds}`;
             }
-            updateMiniPlayerProgress();
+            if (typeof updateMiniPlayerProgress === 'function') {
+                updateMiniPlayerProgress();
+            }
         });
 
         window.mainAudio.addEventListener('ended', () => {
-            resetMiniPlayerProgress();
+            if (typeof resetMiniPlayerProgress === 'function') resetMiniPlayerProgress();
             if (window.playTimer) clearTimeout(window.playTimer);
         });
     }
 
-    if (allSongsSubtitle) allSongsSubtitle.addEventListener('click', () => switchSongsList('all'));
-    if (recentSongsSubtitle) recentSongsSubtitle.addEventListener('click', () => switchSongsList('recent'));
-    if (openAllSongsBtn) openAllSongsBtn.addEventListener('click', showAllSongsList);
-    if (closeAllSongsList) closeAllSongsList.addEventListener('click', hideAllSongsList);
+    if (typeof allSongsSubtitle !== 'undefined' && allSongsSubtitle) {
+        allSongsSubtitle.addEventListener('click', () => typeof switchSongsList === 'function' && switchSongsList('all'));
+    }
+    if (typeof recentSongsSubtitle !== 'undefined' && recentSongsSubtitle) {
+        recentSongsSubtitle.addEventListener('click', () => typeof switchSongsList === 'function' && switchSongsList('recent'));
+    }
+    if (typeof openAllSongsBtn !== 'undefined' && openAllSongsBtn) {
+        openAllSongsBtn.addEventListener('click', () => typeof showAllSongsList === 'function' && showAllSongsList());
+    }
+    if (typeof closeAllSongsList !== 'undefined' && closeAllSongsList) {
+        closeAllSongsList.addEventListener('click', () => typeof hideAllSongsList === 'function' && hideAllSongsList());
+    }
     
-    if (songsSearchInput) {
-        songsSearchInput.addEventListener('input', (e) => filterSongsList(e.target.value));
+    if (typeof songsSearchInput !== 'undefined' && songsSearchInput) {
+        songsSearchInput.addEventListener('input', (e) => typeof filterSongsList === 'function' && filterSongsList(e.target.value));
     } 
 
-    if (miniPlayPauseBtn && typeof window.playPauseMusic === 'function') {
+    if (typeof miniPlayPauseBtn !== 'undefined' && miniPlayPauseBtn && typeof window.playPauseMusic === 'function') {
         miniPlayPauseBtn.addEventListener('click', window.playPauseMusic); 
     }
-    if (miniPrevBtn && typeof window.prevMusic === 'function') {
+    if (typeof miniPrevBtn !== 'undefined' && miniPrevBtn && typeof window.prevMusic === 'function') {
         miniPrevBtn.addEventListener('click', () => window.prevMusic());
     }
-    if (miniNextBtn && typeof window.nextMusic === 'function') {
+    if (typeof miniNextBtn !== 'undefined' && miniNextBtn && typeof window.nextMusic === 'function') {
         miniNextBtn.addEventListener('click', () => window.nextMusic());
     }
-    if (window.playPauseBtn && typeof window.playPauseMusic === 'function') {
+    if (typeof window.playPauseBtn !== 'undefined' && window.playPauseBtn && typeof window.playPauseMusic === 'function') {
         window.playPauseBtn.addEventListener('click', window.playPauseMusic);
-    }    
-    if (openSortMenuBtn) {
+    }     
+    if (typeof openSortMenuBtn !== 'undefined' && openSortMenuBtn) {
         openSortMenuBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             showSortMenu();
@@ -1645,14 +1667,14 @@ document.addEventListener('DOMContentLoaded', function() {
     updateSortMenuVisuals(); 
     
     if (window.location.hash === '#all-songs') {
-        showAllSongsList();
+        if (typeof showAllSongsList === 'function') showAllSongsList();
         history.replaceState({ view: 'allSongsList' }, '', '#all-songs');
     } else {
         history.replaceState({ view: 'defaultPlayer' }, '', window.location.pathname + window.location.search);
-        if (miniPlayerBar) miniPlayerBar.style.display = 'none';
+        if (typeof miniPlayerBar !== 'undefined' && miniPlayerBar) miniPlayerBar.style.display = 'none';
     }
     
     if (window.musicIndex !== undefined && window.allMusic && window.allMusic[window.musicIndex]) {
-        updatePlayerUI(window.allMusic[window.musicIndex]);
+        if (typeof updatePlayerUI === 'function') updatePlayerUI(window.allMusic[window.musicIndex]);
     }
 });
