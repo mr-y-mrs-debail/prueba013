@@ -1798,7 +1798,7 @@ ul li.playing {
     box-sizing: border-box;
     min-height: 80vh;
     margin-top: 0;
-    padding-top: 15vh; 
+    padding-top: 20vh; 
 }
 
 .album-item1, .favorite-option { 
@@ -3270,4 +3270,23 @@ function updatePlayingSong() {
         }
     });
 }*/
+
+
+/* css por el momento */
+
+.mini-spinner.paused {
+    animation: none !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.mini-disc-wrapper.is-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.mini-disc-art[src=""], .mini-disc-art:not([src]) {
+    display: none !important;
+}
 

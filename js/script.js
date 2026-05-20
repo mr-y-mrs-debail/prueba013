@@ -1164,20 +1164,19 @@ function renderSongsList(songsToDisplay, targetContainer) {
     if (!targetContainer) return;
     targetContainer.innerHTML = '';
     
-    if (!window.allMusic || window.allMusic.length === 0) { 
-        return;
-    }
-    
-    const currentSort = window.currentSort; 
-    
-    if (currentSort === 'plays' && songsToDisplay.every(song => (parseInt(song.plays, 10) || 0) === 0) && targetContainer === allSongsListItems) {
+    if (targetContainer === allSongsListItems) {
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message-plays-empty', 'list-empty-message');
         
         messageDiv.innerHTML = `
-        <h3 class="list-empty-highlight">¡Ups!</h3>
-        <p>Escucha más canciones para tener acceso a esta función</p>`;
+        <h3 class="list-empty-highlight">¡Oh! ¡Oh!</h3>
+        <p> Esta función no esta disponible mi amor, pero te envío besitos para TODO TÚ!</p>`;
+        
         targetContainer.appendChild(messageDiv);
+        return;
+    }
+    
+    if (!window.allMusic || window.allMusic.length === 0) { 
         return;
     }
     

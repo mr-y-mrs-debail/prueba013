@@ -292,28 +292,34 @@
             <p class="sort-option" data-sort="plays">Por número de reproducciones <i class="bi bi-check-lg check-icon" style="display: none;"></i></p>
         </div>
     </div>
+
+
+    <!-- solo por el momento cambio en el mini reproductor -->
     
     <div id="mini-player-bar" class="mini-player-bar">
-        <div class="mini-player-left d-flex align-items-center">
-            <div id="suggestions-container-principal" class="mini-disc-wrapper"> 
-                <div id="mini-image-spinner" class="mini-spinner"></div>
-                <img src="" alt="imgMV" class="img-fluid mini-disc-art" id="mini-disc-art"> 
-            </div>
-            <div class="song-details mini-song-info ml-2" style="user-select: none; -webkit-user-select: none;">
-                <p class="name" id="mini-song-name"></p>
-                <p class="artist" id="mini-song-artist"></p>
-            </div>
-        </div>
-        
-        <div class="mini-player-right d-flex align-items-center">
-            <i id="mini-prev" class="bi bi-skip-start-fill mini-control-icon"></i>
-            <div class="mini-play-pause-btn" id="mini-play-pause-btn"> 
-                <i class="bi bi-play-fill mini-play-pause-icon" id="mini-play-pause-icon"></i> 
-            </div>
+    <div class="mini-player-left d-flex align-items-center">
+        <div id="suggestions-container-principal" class="mini-disc-wrapper is-empty"> 
+            <div id="mini-image-spinner" class="mini-spinner paused"></div>
             
-            <i id="mini-next" class="bi bi-skip-end-fill mini-control-icon"></i>
+            <i class="bi bi-disc text-muted" id="mini-empty-icon" style="font-size: 1.2rem; position: absolute; z-index: 2;"></i>
+            
+            <img src="" alt="imgMV" class="img-fluid mini-disc-art" id="mini-disc-art"> 
+        </div>
+        <div class="song-details mini-song-info ml-2" style="user-select: none; -webkit-user-select: none;">
+            <!-- Textos informativos temporales -->
+            <p class="name" id="mini-song-name">No hay canciones por el momento amor</p>
+            <p class="artist" id="mini-song-artist">Te AmooOOOo!</p>
         </div>
     </div>
+    
+    <div class="mini-player-right d-flex align-items-center">
+        <i id="mini-prev" class="bi bi-skip-start-fill mini-control-icon text-muted" style="pointer-events: none;"></i>
+        <div class="mini-play-pause-btn" id="mini-play-pause-btn" style="pointer-events: none; opacity: 0.6;"> 
+            <i class="bi bi-play-fill mini-play-pause-icon" id="mini-play-pause-icon"></i> 
+        </div>
+        <i id="mini-next" class="bi bi-skip-end-fill mini-control-icon text-muted" style="pointer-events: none;"></i>
+    </div>
+</div>
 
     <div id="offline-message" class="hidden-message">
         <p>¡Ups! Parece que no tienes conexión a internet Amor.</p>
